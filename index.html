@@ -1822,7 +1822,7 @@
 
   function assetUrl(path) {
     if (!path || !path.startsWith("assets/")) return path;
-    if (window.location.hostname === "falanbosstile.com") {
+    if (window.location.protocol === "file:" || window.location.hostname === "falanbosstile.com") {
       return `${ASSET_CDN_BASE}${path}`;
     }
     return path;
