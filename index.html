@@ -23,6 +23,7 @@
     --filter-height: 66px;
     --tabs-height: 58px;
     --quick-height: 0px;
+    --nav-toggle-height: 0px;
   }
 
   * { box-sizing: border-box; }
@@ -141,6 +142,10 @@
     font-size: 11px;
   }
 
+  .nav-collapse-toggle {
+    display: none;
+  }
+
   .mobile-menu-toggle {
     display: none;
   }
@@ -238,7 +243,7 @@
 
   .series-section {
     margin-bottom: 30px;
-    scroll-margin-top: calc(var(--filter-height) + var(--tabs-height) + var(--quick-height) + 18px);
+    scroll-margin-top: calc(var(--nav-toggle-height) + var(--filter-height) + var(--tabs-height) + var(--quick-height) + 18px);
   }
 
   .section-header {
@@ -592,7 +597,7 @@
 
     .filter-bar {
       position: sticky;
-      top: 0;
+      top: var(--nav-toggle-height);
       z-index: 70;
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -618,9 +623,27 @@
     }
 
     .count-text { margin-left: 0; width: 100%; }
+    .nav-collapse-toggle {
+      position: sticky;
+      top: 0;
+      z-index: 76;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 36px;
+      padding: 8px 12px;
+      border: 0;
+      background: var(--clay);
+      color: var(--paper);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(34,32,25,.16);
+    }
     .mobile-menu-toggle {
       position: sticky;
-      top: var(--filter-height);
+      top: calc(var(--nav-toggle-height) + var(--filter-height));
       z-index: 65;
       display: flex;
       align-items: center;
@@ -641,7 +664,7 @@
     .section-header { align-items: flex-start; flex-direction: column; }
     .cat-tabs {
       position: sticky;
-      top: calc(var(--filter-height) + var(--quick-height));
+      top: calc(var(--nav-toggle-height) + var(--filter-height) + var(--quick-height));
       z-index: 60;
       display: none;
       flex-direction: column;
@@ -651,7 +674,12 @@
       overflow-y: auto;
       flex-wrap: nowrap;
       padding: 10px 12px;
-      max-height: calc(100vh - var(--filter-height) - var(--quick-height));
+      max-height: calc(100vh - var(--nav-toggle-height) - var(--filter-height) - var(--quick-height));
+    }
+    body.nav-collapsed .filter-bar,
+    body.nav-collapsed .mobile-menu-toggle,
+    body.nav-collapsed .cat-tabs {
+      display: none !important;
     }
     .cat-tabs.mobile-open {
       display: flex;
@@ -737,6 +765,8 @@
 <header class="hero">
   <h1>Tile Product Catalog</h1>
 </header>
+
+<button class="nav-collapse-toggle" type="button" onclick="toggleMobileNavCollapse()" aria-expanded="true"></button>
 
 <div class="filter-bar">
   <label for="sizeFilter">Filter by size</label>
@@ -1529,6 +1559,7 @@
     document.querySelector("#toBottom").setAttribute("aria-label", currentLang === "vi" ? "Đi tới cuối trang" : "Go to bottom");
     document.querySelector("#backTop").setAttribute("aria-label", currentLang === "vi" ? "Quay lên đầu trang" : "Back to top");
     document.querySelector("#lightbox").setAttribute("aria-label", currentLang === "vi" ? "Xem trước hình sản phẩm" : "Product image preview");
+    updateMobileNavToggle();
   }
 
   function setLanguage(lang) {
@@ -1896,6 +1927,23 @@
     document.querySelector(".cat-tabs")?.classList.remove("mobile-open");
   }
 
+  function toggleMobileNavCollapse() {
+    document.body.classList.toggle("nav-collapsed");
+    if (document.body.classList.contains("nav-collapsed")) closeMobileSeriesMenu();
+    updateMobileNavToggle();
+    setStickyOffsets();
+  }
+
+  function updateMobileNavToggle() {
+    const button = document.querySelector(".nav-collapse-toggle");
+    if (!button) return;
+    const collapsed = document.body.classList.contains("nav-collapsed");
+    button.textContent = currentLang === "vi"
+      ? (collapsed ? "Hiện bộ lọc và menu ▾" : "Ẩn bộ lọc và menu ▴")
+      : (collapsed ? "Show filters and menu ▾" : "Hide filters and menu ▴");
+    button.setAttribute("aria-expanded", String(!collapsed));
+  }
+
   function updateMenuOpenState() {
     const tabs = document.querySelector(".cat-tabs");
     if (!tabs) return;
@@ -1906,7 +1954,11 @@
     const filter = document.querySelector(".filter-bar");
     const tabs = document.querySelector(".cat-tabs");
     const mobileToggle = document.querySelector(".mobile-menu-toggle");
-    const mobileToggleHeight = window.matchMedia("(max-width: 760px)").matches ? mobileToggle.offsetHeight : 0;
+    const navToggle = document.querySelector(".nav-collapse-toggle");
+    const isMobile = window.matchMedia("(max-width: 760px)").matches;
+    const mobileToggleHeight = isMobile ? mobileToggle.offsetHeight : 0;
+    const navToggleHeight = isMobile ? navToggle.offsetHeight : 0;
+    document.documentElement.style.setProperty("--nav-toggle-height", `${navToggleHeight}px`);
     document.documentElement.style.setProperty("--filter-height", `${filter.offsetHeight}px`);
     document.documentElement.style.setProperty("--tabs-height", `${tabs.offsetHeight}px`);
     document.documentElement.style.setProperty("--quick-height", `${mobileToggleHeight}px`);
