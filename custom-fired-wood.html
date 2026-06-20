@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom-fired Wood Grain Catalog</title>
+  <style>
+    :root {
+      --bg: #f5efe6;
+      --panel: rgba(255, 252, 247, 0.92);
+      --line: rgba(80, 60, 40, 0.14);
+      --text: #2e241b;
+      --muted: #786656;
+      --accent: #a96d3c;
+      --accent-dark: #7c4f2b;
+      --shadow: 0 24px 60px rgba(74, 49, 25, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(233, 197, 153, 0.35), transparent 28%),
+        linear-gradient(180deg, #fbf5ee 0%, #f1e6d9 100%);
+    }
+
+    .shell {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 56px;
+    }
+
+    .hero {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(18px);
+      background: rgba(245, 239, 230, 0.84);
+      border-bottom: 1px solid rgba(80, 60, 40, 0.08);
+    }
+
+    .hero-inner {
+      width: min(1440px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 18px 0 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: grid;
+      gap: 4px;
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .subline {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions, .spec-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .pill, .spec-link, .lang-btn, .jump-btn {
+      border: 1px solid rgba(124, 79, 43, 0.18);
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--text);
+      text-decoration: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: 180ms ease;
+      cursor: pointer;
+    }
+
+    .pill:hover, .spec-link:hover, .lang-btn:hover, .jump-btn:hover,
+    .pill.active, .spec-link.active, .lang-btn.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .spec-section {
+      margin-bottom: 30px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .section-head {
+      padding: 22px 24px 18px;
+      border-bottom: 1px solid rgba(80, 60, 40, 0.08);
+      display: grid;
+      gap: 10px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 18px;
+      padding: 22px;
+    }
+
+    .card {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .frame {
+      background: #fff;
+      border-radius: 22px;
+      border: 1px solid rgba(80, 60, 40, 0.08);
+      overflow: hidden;
+      box-shadow: 0 18px 36px rgba(76, 52, 29, 0.12);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .card:hover .frame {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 42px rgba(76, 52, 29, 0.18);
+    }
+
+    .frame img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      display: block;
+      background: #f1ece6;
+    }
+
+    .caption {
+      padding: 14px 14px 16px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .code {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      word-break: break-word;
+    }
+
+    .series-tag {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .fab {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 24;
+      display: grid;
+      gap: 10px;
+    }
+
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: none;
+      place-items: center;
+      background: rgba(21, 16, 11, 0.78);
+      padding: 18px;
+    }
+
+    .lightbox.open { display: grid; }
+
+    .lb-card {
+      width: min(1100px, 100%);
+      max-height: 100%;
+      background: rgba(31, 23, 16, 0.94);
+      border-radius: 24px;
+      padding: 16px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .lb-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .lb-close {
+      border: 0;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .lb-image {
+      width: 100%;
+      max-height: calc(100vh - 160px);
+      object-fit: contain;
+      border-radius: 18px;
+      background: #1c1510;
+    }
+
+    @media (max-width: 720px) {
+      .shell, .hero-inner { width: min(100% - 20px, 100%); }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 16px; }
+      .section-head { padding: 18px 16px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="topline">
+        <div class="brand">
+          <span class="eyebrow">Custom-fired Wood Grain</span>
+          <h1 id="pageTitle">Bo suu tap van go dat nung</h1>
+          <p class="subline" id="pageSubline">Trang rieng cho 3 quy cach 150x900 / 200x1000 / 200x1200.</p>
+        </div>
+        <div class="actions">
+          <a class="pill" href="tile-product-catalog.html" id="backMain">Back to main catalog</a>
+          <button class="lang-btn active" type="button" data-lang="vi">VI</button>
+          <button class="lang-btn" type="button" data-lang="en">EN</button>
+        </div>
+      </div>
+      <nav class="spec-tabs" id="specTabs"></nav>
+    </div>
+  </header>
+
+  <main class="shell">
+    <div id="specSections"></div>
+  </main>
+
+  <div class="fab">
+    <button class="jump-btn" type="button" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" id="toTop">Top</button>
+    <button class="jump-btn" type="button" onclick="window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' })" id="toBottom">Bottom</button>
+  </div>
+
+  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <div class="lb-card">
+      <div class="lb-top">
+        <div id="lbCode"></div>
+        <button class="lb-close" type="button" onclick="closeLightbox()">✕</button>
+      </div>
+      <img id="lbImage" class="lb-image" alt="">
+    </div>
+  </div>
+
+  <script src="assets/custom-fired-wood-data.js"></script>
+  <script>
+    const copy = {
+      vi: {
+        pageTitle: "Bo suu tap van go dat nung",
+        pageSubline: "Trang rieng cho 3 quy cach 150x900 / 200x1000 / 200x1200.",
+        backMain: "Ve lai product catalog",
+        top: "Len dau trang",
+        bottom: "Xuong cuoi trang",
+        specs: "Quy cach",
+        items: "mau",
+        packing: "Dong goi",
+        test: "Chi tieu"
+      },
+      en: {
+        pageTitle: "Custom-fired Wood Grain Catalog",
+        pageSubline: "Standalone page for the 150x900 / 200x1000 / 200x1200 collections.",
+        backMain: "Back to main catalog",
+        top: "Back to top",
+        bottom: "To bottom",
+        specs: "Specs",
+        items: "items",
+        packing: "Packing",
+        test: "Test"
+      }
+    };
+
+    const labelMap = {
+      "150x900": { vi: "150x900mm", en: "150x900mm" },
+      "200x1000": { vi: "200x1000mm", en: "200x1000mm" },
+      "200x1200": { vi: "200x1200mm", en: "200x1200mm" }
+    };
+
+    let currentLang = "vi";
+    let flatItems = [];
+
+    function t(key) {
+      return copy[currentLang][key];
+    }
+
+    function sectionTitle(group) {
+      return currentLang === "vi"
+        ? `Van go dat nung ${group.sizeKey}mm`
+        : group.label;
+    }
+
+    function renderTabs(data) {
+      document.querySelector("#specTabs").innerHTML = data.map((group, index) => `
+        <a class="spec-link ${index === 0 ? "active" : ""}" href="#${group.slug}" data-target="${group.slug}">
+          ${labelMap[group.sizeKey][currentLang]}
+        </a>
+      `).join("");
+    }
+
+    function renderSections(data) {
+      flatItems = [];
+      const html = data.map((group) => {
+        const cards = group.items.map((item) => {
+          flatItems.push(item);
+          const idx = flatItems.length - 1;
+          return `
+            <button class="card" type="button" onclick="openLightbox(${idx})">
+              <div class="frame">
+                <img src="${item.image}" alt="${item.code}" loading="lazy">
+                <div class="caption">
+                  <div class="code">${item.code}</div>
+                  <div class="series-tag">${labelMap[group.sizeKey][currentLang]} / ${group.items.length} ${t("items")}</div>
+                </div>
+              </div>
+            </button>
+          `;
+        }).join("");
+
+        return `
+          <section id="${group.slug}" class="spec-section">
+            <div class="section-head">
+              <h2>${sectionTitle(group)}</h2>
+              <div class="meta">
+                <div>${t("packing")}: ${group.packing}</div>
+                <div>${t("test")}: ${group.test}</div>
+              </div>
+            </div>
+            <div class="grid">${cards}</div>
+          </section>
+        `;
+      }).join("");
+      document.querySelector("#specSections").innerHTML = html;
+    }
+
+    function renderPage() {
+      const data = window.customFiredWoodData || [];
+      document.querySelector("#backMain").setAttribute("href", location.protocol === "file:" ? "tile-product-catalog.html" : "index.html");
+      document.querySelector("#pageTitle").textContent = t("pageTitle");
+      document.querySelector("#pageSubline").textContent = t("pageSubline");
+      document.querySelector("#backMain").textContent = t("backMain");
+      document.querySelector("#toTop").textContent = t("top");
+      document.querySelector("#toBottom").textContent = t("bottom");
+      document.title = currentLang === "vi" ? "Bo suu tap van go dat nung" : "Custom-fired Wood Grain Catalog";
+      renderTabs(data);
+      renderSections(data);
+      document.querySelectorAll(".lang-btn").forEach((btn) => btn.classList.toggle("active", btn.dataset.lang === currentLang));
+    }
+
+    function openLightbox(index) {
+      const item = flatItems[index];
+      if (!item) return;
+      document.querySelector("#lbCode").textContent = item.code;
+      document.querySelector("#lbImage").src = item.image;
+      document.querySelector("#lbImage").alt = item.code;
+      document.querySelector("#lightbox").classList.add("open");
+    }
+
+    function closeLightbox(event) {
+      if (event && event.target !== event.currentTarget) return;
+      document.querySelector("#lightbox").classList.remove("open");
+    }
+
+    document.querySelectorAll(".lang-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        currentLang = btn.dataset.lang;
+        renderPage();
+      });
+    });
+
+    window.addEventListener("hashchange", () => {
+      const target = location.hash.slice(1);
+      document.querySelectorAll(".spec-link").forEach((link) => link.classList.toggle("active", link.dataset.target === target));
+    });
+
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeLightbox();
+    });
+
+    renderPage();
+  </script>
+</body>
+</html>

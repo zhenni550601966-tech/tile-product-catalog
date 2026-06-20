@@ -225,6 +225,33 @@
     cursor: pointer;
   }
 
+  a.menu-item {
+    display: block;
+    text-decoration: none;
+  }
+
+  .menu-item.menu-link {
+    margin-top: 8px;
+    border: 1px solid rgba(49, 93, 96, 0.22);
+    background: linear-gradient(180deg, rgba(228, 241, 239, 0.96), rgba(211, 231, 228, 0.92));
+    color: #315d60;
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.45);
+  }
+
+  .menu-item.menu-link:hover {
+    background: linear-gradient(180deg, rgba(213, 234, 231, 1), rgba(193, 222, 218, 0.98));
+    color: #24484b;
+    border-color: rgba(49, 93, 96, 0.4);
+  }
+
+  .menu-item.menu-link::after {
+    content: "↗";
+    float: right;
+    font-weight: 700;
+    opacity: 0.72;
+  }
+
   .menu-item:hover, .menu-item.active {
     background: var(--sage);
     color: var(--paper);
@@ -233,6 +260,223 @@
   .cat-tabs.menu-open {
     z-index: 85;
     overflow: visible;
+  }
+
+  .featured-section {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 24px 18px 0;
+  }
+
+  .featured-shell {
+    border-bottom: 1px solid rgba(122, 91, 58, 0.16);
+    padding: 0 0 24px;
+  }
+
+  .featured-header {
+    margin-bottom: 18px;
+  }
+
+  .featured-kicker {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .featured-header h2 {
+    margin: 0;
+    color: var(--ink);
+    font-size: clamp(24px, 2.5vw, 32px);
+    line-height: 1.1;
+    font-weight: 500;
+  }
+
+  .featured-series-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .featured-series-pill {
+    border: 0;
+    border-bottom: 1px solid transparent;
+    border-radius: 0;
+    padding: 0 0 4px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0;
+    cursor: pointer;
+  }
+
+  .featured-series-pill.active {
+    color: var(--ink);
+    border-bottom-color: var(--ink);
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .featured-card {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+    min-height: 0;
+    border: 0;
+    border-radius: 12px;
+    padding: 0;
+    background: #f6efe4;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+
+  .featured-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 30px rgba(34,32,25,.12);
+  }
+
+  .featured-card img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: contain;
+    display: block;
+  }
+
+  .featured-card::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 34%;
+    background: linear-gradient(180deg, transparent, rgba(34,32,25,.48));
+    pointer-events: none;
+  }
+
+  .featured-preview-info {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    z-index: 1;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--paper);
+  }
+
+  .featured-preview-info b {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .featured-preview-info span {
+    display: block;
+    margin-top: 3px;
+    color: rgba(255,250,240,.78);
+    font-size: 11px;
+  }
+
+  .featured-counter {
+    border-radius: 999px;
+    padding: 5px 9px;
+    background: rgba(255,255,255,.12);
+    color: var(--paper);
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .featured-series-name {
+    display: inline-block;
+    margin-bottom: 4px;
+    color: rgba(255,250,240,.86);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .featured-carousel {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .featured-track {
+    display: flex;
+    transition: transform .35s ease;
+    will-change: transform;
+  }
+
+  .featured-slide {
+    min-width: 100%;
+  }
+
+  .featured-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
+  }
+
+  .featured-arrows {
+    position: absolute;
+    inset: 50% 0 auto 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .featured-arrow {
+    position: absolute;
+    top: 0;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(122, 91, 58, 0.14);
+    border-radius: 999px;
+    background: rgba(255,255,255,.72);
+    color: var(--ink);
+    font-size: 18px;
+    transform: translateY(-50%);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .featured-arrow.prev {
+    left: 10px;
+  }
+
+  .featured-arrow.next {
+    right: 10px;
+  }
+
+  .featured-dots {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .featured-dot {
+    width: 10px;
+    height: 10px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(122, 91, 58, 0.22);
+    cursor: pointer;
+  }
+
+  .featured-dot.active {
+    width: 24px;
+    background: var(--ink);
   }
 
   main {
@@ -564,11 +808,11 @@
   }
 
   .floating-nav.to-top {
-    bottom: 18px;
+    bottom: 76px;
   }
 
   .floating-nav.to-bottom {
-    bottom: 76px;
+    bottom: 18px;
   }
 
   .floating-nav.visible {
@@ -652,12 +896,12 @@
       min-height: 48px;
       padding: 11px 16px;
       border: 0;
-      background: var(--sage);
+      background: linear-gradient(135deg, #8d5f36, #b76437);
       color: var(--paper);
       font-weight: 800;
       cursor: pointer;
       letter-spacing: .01em;
-      box-shadow: 0 10px 22px rgba(34,32,25,.18);
+      box-shadow: 0 10px 22px rgba(122,91,58,.28);
     }
     .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .placeholder-grid { grid-template-columns: 1fr; }
@@ -745,8 +989,13 @@
       height: 44px;
     }
 
-    .floating-nav.to-top { bottom: 12px; }
-    .floating-nav.to-bottom { bottom: 64px; }
+    .floating-nav.to-top { bottom: 64px; }
+    .floating-nav.to-bottom { bottom: 12px; }
+    .featured-section { padding: 18px 14px 0; }
+    .featured-shell { padding: 16px; border-radius: 18px; }
+    .featured-header { display: block; }
+    .featured-grid { grid-template-columns: 1fr; }
+    .featured-card img { aspect-ratio: 4 / 5; }
   }
 
   @media (max-width: 430px) {
@@ -807,6 +1056,7 @@
 <button class="mobile-menu-toggle" type="button" onclick="toggleMobileSeriesMenu()">☰ Series Menu ▾</button>
 
 <div class="cat-tabs">
+  <button class="tab" type="button" data-section="featured" onclick="jumpFeatured()">Hot Picks</button>
   <button class="tab active" type="button" data-section="all" onclick="jumpAll()">All Series</button>
   <details class="series-menu">
     <summary class="tab" data-section="wood">Wood Grain ▾</summary>
@@ -820,6 +1070,7 @@
       <button class="menu-item" type="button" data-size="470x1200" onclick="jumpSpec('470x1200', 'wood')">Wood Grain 470x1200x12mm</button>
       <button class="menu-item" type="button" data-size="stair-600-300x1200" onclick="jumpSpec('stair-600-300x1200', 'wood')">Wood Grain 300x1200x15/18mm</button>
       <button class="menu-item" type="button" data-size="wood-deck-200" onclick="jumpSpec('wood-deck-200', 'wood')">Deck 200x1000 / 200x1200</button>
+      <a class="menu-item menu-link" href="custom-fired-wood.html">Custom-fired Wood 150x900 / 200x1000 / 200x1200</a>
     </div>
   </details>
   <details class="series-menu">
@@ -828,6 +1079,8 @@
       <button class="menu-item" type="button" data-size="" onclick="jumpSeries('stair')">All Stair Step</button>
       <button class="menu-item" type="button" data-size="stair-470x1200" onclick="jumpSpec('stair-470x1200', 'stair')">Golden Silk 470x1200x12mm</button>
       <button class="menu-item" type="button" data-size="golden-silk-470x1200-15" onclick="jumpSpec('golden-silk-470x1200-15', 'stair')">Golden Silk 470x1200x15mm</button>
+      <button class="menu-item" type="button" data-size="stair-plain-470x1200-12" onclick="jumpSpec('stair-plain-470x1200-12', 'stair')">Regular 470x1200x12mm</button>
+      <button class="menu-item" type="button" data-size="stair-plain-470x1200-15" onclick="jumpSpec('stair-plain-470x1200-15', 'stair')">Regular 470x1200x15mm</button>
       <button class="menu-item" type="button" data-size="stair-outdoor" onclick="jumpSpec('stair-outdoor', 'stair')">Outdoor Stair Series</button>
     </div>
   </details>
@@ -857,11 +1110,14 @@
     <summary class="tab" data-section="carpet">Carpet Series ▾</summary>
     <div class="series-dropdown">
       <button class="menu-item" type="button" data-size="" onclick="jumpSeries('carpet')">All Carpet</button>
+      <button class="menu-item" type="button" data-size="carpet-600x1200" onclick="jumpSpec('carpet-600x1200', 'carpet')">600x1200mm</button>
       <button class="menu-item" type="button" data-size="carpet-720x900" onclick="jumpSpec('carpet-720x900', 'carpet')">720x900mm</button>
       <button class="menu-item" type="button" data-size="carpet-750x1350" onclick="jumpSpec('carpet-750x1350', 'carpet')">750x1350mm</button>
     </div>
   </details>
 </div>
+
+<section id="featured" class="featured-section"></section>
 
 <main id="catalog"></main>
 
@@ -993,14 +1249,20 @@
       series: "wood",
       sizeKey: "600x1200",
       label: "Wood Grain 600x1200 Castle Stone Series",
-      folder: "600x1200",
+      folder: "custom-600-castle",
       prefix: "WOOD-600-CASTLE",
       mergeKey: "wood-600x1200-family",
       subgroupLabel: "Castle Stone Series",
-      items: numberedImageItems("600x1200", "WOOD-600", [
-        [28, "TB613026"],
-        [29, "TB613025"]
-      ])
+      items: [
+        { code: "TB613025", gallery: ["assets/custom-600-castle/TB613025.jpg"] },
+        { code: "TB613026", gallery: ["assets/custom-600-castle/TB613026.jpg"] },
+        { code: "TB613027", gallery: ["assets/custom-600-castle/TB613027.jpg"] },
+        { code: "TB613028", gallery: ["assets/custom-600-castle/TB613028.jpg"] },
+        { code: "TB613029", gallery: ["assets/custom-600-castle/TB613029.jpg"] },
+        { code: "TB613030", gallery: ["assets/custom-600-castle/TB613030.jpg"] },
+        { code: "TB613031", gallery: ["assets/custom-600-castle/TB613031.jpg"] },
+        { code: "TB613032", gallery: ["assets/custom-600-castle/TB613032.jpg"] }
+      ]
     },
     {
       series: "wood",
@@ -1175,6 +1437,38 @@
         { code: "FD702D", gallery: ["assets/golden-silk-real/golden-silk-15-FD702D.jpg"] },
         { code: "FD703D", gallery: ["assets/golden-silk-real/golden-silk-15-FD703D.jpg"] },
         { code: "FD704D", gallery: ["assets/golden-silk-real/golden-silk-15-FD704D.jpg"] }
+      ]
+    },
+    {
+      series: "stair",
+      sizeKey: "stair-plain-470x1200-12",
+      label: "Regular Stair Step 470x1200x12mm",
+      folder: "stair-470-plain-12",
+      prefix: "PLAIN-470-12",
+      items: [
+        { code: "BJ471201", gallery: ["assets/stair-470-plain-12/BJ471201.jpg"] },
+        { code: "BJ471202", gallery: ["assets/stair-470-plain-12/BJ471202.jpg"] },
+        { code: "BJ471203", gallery: ["assets/stair-470-plain-12/BJ471203.jpg"] },
+        { code: "BJ471205", gallery: ["assets/stair-470-plain-12/BJ471205.jpg"] }
+      ]
+    },
+    {
+      series: "stair",
+      sizeKey: "stair-plain-470x1200-15",
+      label: "Regular Stair Step 470x1200x15mm",
+      folder: "stair-470-plain-15",
+      prefix: "PLAIN-470-15",
+      items: [
+        { code: "TB154701R", gallery: ["assets/stair-470-plain-15/TB154701R.jpg"] },
+        { code: "TB154702R", gallery: ["assets/stair-470-plain-15/TB154702R.jpg"] },
+        { code: "TB154703R", gallery: ["assets/stair-470-plain-15/TB154703R.jpg"] },
+        { code: "TB154705R", gallery: ["assets/stair-470-plain-15/TB154705R.jpg"] },
+        { code: "TB154706R", gallery: ["assets/stair-470-plain-15/TB154706R.jpg"] },
+        { code: "TB154707R", gallery: ["assets/stair-470-plain-15/TB154707R.jpg"] },
+        { code: "TB154708R", gallery: ["assets/stair-470-plain-15/TB154708R.jpg"] },
+        { code: "TB154709R", gallery: ["assets/stair-470-plain-15/TB154709R.jpg"] },
+        { code: "TB154710R", gallery: ["assets/stair-470-plain-15/TB154710R.jpg"] },
+        { code: "TB154711R", gallery: ["assets/stair-470-plain-15/TB154711R.jpg"] }
       ]
     },
     {
@@ -1355,6 +1649,25 @@
     },
     {
       series: "carpet",
+      sizeKey: "carpet-600x1200",
+      label: "Carpet Tile 600x1200mm",
+      folder: "custom-600-carpet",
+      prefix: "CARPET-600",
+      subgroupLabel: "Carpet Pattern Series",
+      items: [
+        { code: "DT61101-SC", gallery: ["assets/custom-600-carpet/DT61101-SC.jpg"] },
+        { code: "DT61103-SC", gallery: ["assets/custom-600-carpet/DT61103-SC.jpg"] },
+        { code: "DT61105-SC", gallery: ["assets/custom-600-carpet/DT61105-SC.jpg"] },
+        { code: "DT61106-SC-6", gallery: ["assets/custom-600-carpet/DT61106-SC-6.jpg"] },
+        { code: "DT61107-SC-3", gallery: ["assets/custom-600-carpet/DT61107-SC-3.jpg"] },
+        { code: "DT61108-SC-3", gallery: ["assets/custom-600-carpet/DT61108-SC-3.jpg"] },
+        { code: "DT61109-SC", gallery: ["assets/custom-600-carpet/DT61109-SC.jpg"] },
+        { code: "DT61110-SC", gallery: ["assets/custom-600-carpet/DT61110-SC.jpg"] },
+        { code: "DT61111-SC", gallery: ["assets/custom-600-carpet/DT61111-SC.jpg"] }
+      ]
+    },
+    {
+      series: "carpet",
       sizeKey: "carpet-720x900",
       label: "Carpet Tile 720x900mm",
       folder: "carpet-pdf",
@@ -1460,15 +1773,46 @@
   });
 
   const pendingSections = [];
+  const featuredCollections = [
+    {
+      id: "lotus-series",
+      title: "Lotus Series",
+      badge: "Hot Picks",
+      size: "600x1200mm",
+      code: "TB613038",
+      note: "Best seller for warm wood-look projects and premium indoor spaces.",
+      cta: "View Lotus Series",
+      series: "wood",
+      sizeKey: "600x1200",
+      subgroupLabel: "Lotus Series"
+    },
+    {
+      id: "castle-stone-series",
+      title: "Castle Stone Series",
+      badge: "Hot Picks",
+      size: "600x1200mm",
+      code: "TB613025",
+      note: "Recommended for customers who want a richer stone-and-wood texture story.",
+      cta: "View Castle Stone Series",
+      series: "wood",
+      sizeKey: "600x1200",
+      subgroupLabel: "Castle Stone Series"
+    }
+  ];
 
+  const featured = document.querySelector("#featured");
   const catalog = document.querySelector("#catalog");
   let activePhotoIndex = 0;
   let activeGallery = [];
   let activeGalleryIndex = 0;
   let activeMenuSizeKey = "";
   let currentLang = "vi";
+  let activeFeaturedIndex = 0;
+  let activeFeaturedCollectionId = "lotus-series";
+  let activeFeaturedImageIndex = 0;
+  let featuredAutoplay = null;
 
-  const ASSET_CDN_BASE = "https://zhenni550601966-tech.github.io/tile-product-catalog/";
+  const ASSET_CDN_BASE = "https://adanye-tech.github.io/tile-product-catalog/";
 
   function assetUrl(path) {
     if (!path || !path.startsWith("assets/")) return path;
@@ -1480,6 +1824,10 @@
 
   const viText = {
     "Tile Product Catalog": "Danh mục sản phẩm gạch",
+    "Hot Picks": "Mẫu bán chạy",
+    "Most Popular Collections": "Bộ sưu tập được ưa chuộng",
+    "Most Popular Series": "Dòng bán chạy",
+    "Size": "Kích thước",
     "Filter by size": "Lọc theo kích thước",
     "All sizes": "Tất cả kích thước",
     "Series": "Dòng sản phẩm",
@@ -1575,9 +1923,114 @@
   function setLanguage(lang) {
     currentLang = lang;
     applyStaticLanguage();
+    renderFeatured();
     renderCatalog();
     setStickyOffsets();
     updateFloatingNav();
+  }
+
+  function subgroupKey(value) {
+    return (value || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  function featuredPhotos(item) {
+    const targetGroup = specGroups.find((group) =>
+      group.series === item.series &&
+      group.sizeKey === item.sizeKey &&
+      subgroupKey(group.subgroupLabel || group.label) === subgroupKey(item.subgroupLabel || item.title)
+    );
+    if (!targetGroup) return [];
+    if (targetGroup.items) {
+      return targetGroup.items.map((entry) => ({
+        code: entry.code,
+        src: entry.gallery[0]
+      }));
+    }
+    const groupKey = targetGroup.mergeKey || `${targetGroup.prefix}-${targetGroup.start || 1}`;
+    return allPhotos
+      .filter((photo) => photo.groupKey === groupKey)
+      .map((photo) => ({ code: photo.code, src: photo.thumb }));
+  }
+
+  function featuredGalleryItems() {
+    return featuredCollections
+      .filter((item) => item.id === activeFeaturedCollectionId)
+      .flatMap((item) => {
+      return featuredPhotos(item).map((photo) => ({
+        subgroupId: item.id,
+        title: item.title,
+        size: item.size,
+        code: photo.code,
+        src: photo.src
+      }));
+      });
+  }
+
+  function featuredPageCount() {
+    return Math.max(1, Math.ceil(featuredGalleryItems().length / 3));
+  }
+
+  function renderFeatured() {
+    if (!featured) return;
+    const galleryItems = featuredGalleryItems();
+    const pageSize = 3;
+    const pageCount = Math.max(1, Math.ceil(galleryItems.length / pageSize));
+    const safePageIndex = Math.min(activeFeaturedIndex, pageCount - 1);
+    const pages = Array.from({ length: pageCount }, (_, pageIndex) =>
+      galleryItems.slice(pageIndex * pageSize, pageIndex * pageSize + pageSize)
+    );
+    featured.innerHTML = `
+      <div class="featured-shell">
+        <div class="featured-header">
+          <div>
+            <span class="featured-kicker">${t("Hot Picks")}</span>
+            <h2>${t("Most Popular Series")}</h2>
+            <div class="featured-series-line">
+              ${featuredCollections.map((item) => `
+                <button class="featured-series-pill ${item.id === activeFeaturedCollectionId ? "active" : ""}" type="button" onclick="setFeaturedCollection('${item.id}')">${t(item.title)}</button>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+        <div class="featured-carousel">
+          <div class="featured-arrows">
+            <button class="featured-arrow prev" type="button" onclick="moveFeatured(-1)" aria-label="Previous featured images">‹</button>
+            <button class="featured-arrow next" type="button" onclick="moveFeatured(1)" aria-label="Next featured images">›</button>
+          </div>
+          <div class="featured-track" style="transform: translateX(-${safePageIndex * 100}%);">
+            ${pages.map((page, pageIndex) => `
+              <article class="featured-slide">
+                <div class="featured-grid">
+                  ${page.map((item, itemIndex) => `
+                    <button class="featured-card" type="button" onclick="jumpFeaturedSubgroup('${item.subgroupId}')">
+                      <img src="${assetUrl(item.src || "")}" alt="${item.title}" loading="lazy">
+                      <div class="featured-preview-info">
+                        <div>
+                          <span class="featured-series-name">${t(item.title)}</span>
+                          <b>${item.code || ""}</b>
+                          <span>${t("Size")}: ${item.size}</span>
+                        </div>
+                        <span class="featured-counter">${pageIndex * pageSize + itemIndex + 1} / ${galleryItems.length}</span>
+                      </div>
+                    </button>
+                  `).join("")}
+                </div>
+              </article>
+            `).join("")}
+          </div>
+        </div>
+        <div class="featured-controls">
+          <div class="featured-dots">
+            ${pages.map((_, index) => `
+              <button class="featured-dot ${index === safePageIndex ? "active" : ""}" type="button" onclick="setFeaturedSlide(${index})" aria-label="Featured page ${index + 1}"></button>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   function actualSizeKeys(group) {
@@ -1615,11 +2068,14 @@
       "wood-deck-200": "200x1000: thickness 18mm / 37.5kg per box / 5 pcs per box; 200x1200: thickness 18mm / 36kg per box / 4 pcs per box",
       "470x1200": "Thickness: 12mm / 43.5kg per box / 3 pcs per box / pallet: 10 pallets x 56 boxes + 3 pallets x 25 boxes / loose load: 640 boxes",
       "stair-470x1200": "Thickness: 12mm / 43.5kg per box / 3 pcs per box / pallet: 10 pallets x 56 boxes + 3 pallets x 25 boxes / loose load: 640 boxes",
+      "stair-plain-470x1200-12": "Thickness: 12mm / 43.5kg per box / 3 pcs per box / pallet: 10 pallets x 56 boxes + 3 pallets x 25 boxes / loose load: 640 boxes",
+      "stair-plain-470x1200-15": "Thickness: 15mm / 37kg per box / 2 pcs per box / pallet: 10 pallets x 56 boxes + 6 pallets x 27 boxes + 1 pallet x 23 boxes / loose load: 755 boxes",
       "golden-silk-470x1200-15": "Thickness: 15mm / 37kg per box / 2 pcs per box / pallet: 10 pallets x 56 boxes + 6 pallets x 27 boxes + 1 pallet x 23 boxes / loose load: 755 boxes",
       "800x800": "41kg per box / 3 pcs per box",
       "1000-glossy": "Thickness: 9.8+/-0.2mm / 45kg per box / 2 pcs per box / 42 boxes per pallet",
       "1000-rustic": "Thickness: 9.8+/-0.2mm / 45kg per box / 2 pcs per box / 42 boxes per pallet",
       "1200x1200": "65kg per box / 2 pcs per box / 39 boxes per pallet",
+      "carpet-600x1200": "Thickness: 9.8mm / 43kg per box / 3 pcs per box",
       "carpet-720x900": "Thickness: 9.5mm / 41kg per box / 3 pcs per box",
       "carpet-750x1350": "Thickness: 9.8mm / 43kg per box / 2 pcs per box"
     };
@@ -1645,11 +2101,14 @@
       "600x1200": "Water absorption: <=0.5%",
       "470x1200": "Water absorption: 0.5-3%",
       "stair-470x1200": "Water absorption: 0.5-3%",
+      "stair-plain-470x1200-12": "Water absorption: 0.5-3%",
+      "stair-plain-470x1200-15": "Water absorption: 0.5-3%",
       "golden-silk-470x1200-15": "Water absorption: 0.5-3%",
       "800x800": "Water absorption: 0.5-3%",
       "1000-glossy": "Water absorption: <=0.5%",
       "1000-rustic": "Water absorption: <=0.5%",
       "1200x1200": "Water absorption: <=0.5%",
+      "carpet-600x1200": "Water absorption: <=0.5%",
       "carpet-720x900": "Water absorption: <=0.5%",
       "carpet-750x1350": "Water absorption: <=0.5%",
       "wood-deck-200": "Water absorption: 3-6%"
@@ -1690,7 +2149,7 @@
         const subgroupPhotos = allPhotos.filter((photo) => photo.groupKey === groupKey && photo.sourceKey === item.prefix);
         const itemPackageInfo = packageInfo(item);
         return `
-          <div class="spec-subgroup" data-size="${item.sizeKey}">
+          <div class="spec-subgroup" data-size="${item.sizeKey}" data-subgroup="${subgroupKey(item.subgroupLabel || item.label)}">
             <div class="subspec-title">
               <div>${translateText(item.subgroupLabel || item.label)}${itemPackageInfo ? `<small>${itemPackageInfo}</small>` : ""}</div>
               <span>${countText(subgroupPhotos.length)}</span>
@@ -1865,6 +2324,10 @@
 
   function setActiveSpec(sizeKey, seriesKey) {
     document.querySelectorAll(".menu-item").forEach((button) => {
+      if (button.classList.contains("menu-link")) {
+        button.classList.remove("active");
+        return;
+      }
       const menu = button.closest(".series-menu");
       const menuSeries = menu?.querySelector(".tab")?.dataset.section;
       const isAllForSeries = !sizeKey && seriesKey && !button.dataset.size && menuSeries === seriesKey;
@@ -1883,6 +2346,65 @@
       document.querySelector(`#${sectionId}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 40);
     closeSeriesMenus();
+  }
+
+  function jumpFeatured() {
+    activeMenuSizeKey = "";
+    document.querySelector("#sizeFilter").value = "";
+    document.querySelector("#seriesFilter").value = "";
+    applyFilters();
+    setActiveTab("featured");
+    window.setTimeout(() => {
+      document.querySelector("#featured")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 40);
+    closeSeriesMenus();
+  }
+
+  function jumpFeaturedSubgroup(subgroupId) {
+    const featuredItem = featuredCollections.find((item) => item.id === subgroupId);
+    if (!featuredItem) return;
+    activeFeaturedCollectionId = subgroupId;
+    activeFeaturedIndex = 0;
+    activeFeaturedImageIndex = 0;
+    renderFeatured();
+    activeMenuSizeKey = "";
+    document.querySelector("#sizeFilter").value = "";
+    document.querySelector("#seriesFilter").value = featuredItem.series;
+    applyFilters();
+    setActiveTab(featuredItem.series);
+    window.setTimeout(() => {
+      const target = document.querySelector(`.spec-subgroup[data-subgroup="${subgroupId}"]`);
+      target?.closest(".spec-block")?.classList.remove("collapsed");
+      target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+    closeSeriesMenus();
+  }
+
+  function setFeaturedSlide(index) {
+    const pageCount = featuredPageCount();
+    activeFeaturedIndex = (index + pageCount) % pageCount;
+    renderFeatured();
+  }
+
+  function setFeaturedCollection(collectionId) {
+    activeFeaturedCollectionId = collectionId;
+    activeFeaturedIndex = 0;
+    activeFeaturedImageIndex = 0;
+    renderFeatured();
+    startFeaturedAutoplay();
+  }
+
+  function moveFeatured(step) {
+    setFeaturedSlide(activeFeaturedIndex + step);
+  }
+
+  function startFeaturedAutoplay() {
+    if (featuredAutoplay) window.clearInterval(featuredAutoplay);
+    featuredAutoplay = window.setInterval(() => {
+      const pageCount = featuredPageCount();
+      activeFeaturedIndex = (activeFeaturedIndex + 1) % pageCount;
+      renderFeatured();
+    }, 2800);
   }
 
   function jumpSeries(sectionId) {
@@ -2098,6 +2620,7 @@
   });
 
   setLanguage("vi");
+  startFeaturedAutoplay();
   window.addEventListener("resize", setStickyOffsets);
   window.addEventListener("scroll", positionOpenSeriesMenu, { passive: true });
   document.querySelectorAll(".series-section").forEach((section) => sectionObserver.observe(section));
