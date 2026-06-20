@@ -626,15 +626,15 @@
       align-items: center;
       justify-content: space-between;
       width: 100%;
-      min-height: 44px;
-      padding: 10px 14px;
+      min-height: 48px;
+      padding: 11px 16px;
       border: 0;
-      border-bottom: 1px solid var(--line);
-      background: #eee3d3;
-      color: var(--sage);
+      background: var(--sage);
+      color: var(--paper);
       font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 8px 18px rgba(34,32,25,.08);
+      letter-spacing: .01em;
+      box-shadow: 0 10px 22px rgba(34,32,25,.18);
     }
     .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .placeholder-grid { grid-template-columns: 1fr; }
@@ -774,7 +774,7 @@
   <span id="filterCount" class="count-text"></span>
 </div>
 
-<button class="mobile-menu-toggle" type="button" onclick="toggleMobileSeriesMenu()">Series Menu ▾</button>
+<button class="mobile-menu-toggle" type="button" onclick="toggleMobileSeriesMenu()">☰ Series Menu ▾</button>
 
 <div class="cat-tabs">
   <button class="tab active" type="button" data-section="all" onclick="jumpAll()">All Series</button>
@@ -1486,7 +1486,7 @@
     "Product image": "Hình sản phẩm",
     "Product view, detail view, and application view": "Hình sản phẩm, chi tiết và phối cảnh",
     "Real product view, electronic render, detail view, and application view": "Hình thực tế, hình phối cảnh, chi tiết và ứng dụng",
-    "Series Menu ▾": "Menu dòng sản phẩm ▾",
+    "☰ Series Menu ▾": "☰ Menu dòng sản phẩm ▾",
     "Close": "Đóng",
     "Click Close, press Esc, or click outside the image to return.": "Bấm Đóng, nhấn Esc hoặc bấm ngoài hình để quay lại."
   };
