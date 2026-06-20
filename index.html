@@ -1830,6 +1830,11 @@
     return path;
   }
 
+  function thumbUrl(path) {
+    if (!path || !path.startsWith("assets/")) return assetUrl(path);
+    return assetUrl(`assets/card-thumbs/${path.slice("assets/".length)}`);
+  }
+
   function lazyImage(path, alt = "") {
     return `<img src="${IMAGE_PLACEHOLDER}" data-src="${assetUrl(path)}" alt="${alt}" decoding="async">`;
   }
@@ -2045,7 +2050,7 @@
                 <div class="featured-grid">
                   ${page.map((item, itemIndex) => `
                     <button class="featured-card" type="button" onclick="jumpFeaturedSubgroup('${item.subgroupId}')">
-                      ${lazyImage(item.src || "", item.title)}
+                      ${lazyImage(thumbUrl(item.src || ""), item.title)}
                       <div class="featured-preview-info">
                         <div>
                           <span class="featured-series-name">${t(item.title)}</span>
@@ -2164,7 +2169,7 @@
     const index = allPhotos.findIndex((item) => item.id === photo.id);
     return `
       <button class="product-card" type="button" data-series="${photo.series}" data-size="${photo.sizeKey}" data-actual-sizes="${photo.actualSizes.join(" ")}" onclick="openLightbox(${index})">
-        ${lazyImage(photo.thumb, photo.code)}
+        ${lazyImage(thumbUrl(photo.thumb), photo.code)}
         <div class="card-info">
           <span class="code">${photo.code}</span>
           <span class="size">${translateText(photo.size)}</span>
