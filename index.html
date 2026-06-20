@@ -1077,10 +1077,8 @@
     <summary class="tab" data-section="stair">Stair Step Series ▾</summary>
     <div class="series-dropdown">
       <button class="menu-item" type="button" data-size="" onclick="jumpSeries('stair')">All Stair Step</button>
-      <button class="menu-item" type="button" data-size="stair-470x1200" onclick="jumpSpec('stair-470x1200', 'stair')">Golden Silk 470x1200x12mm</button>
-      <button class="menu-item" type="button" data-size="golden-silk-470x1200-15" onclick="jumpSpec('golden-silk-470x1200-15', 'stair')">Golden Silk 470x1200x15mm</button>
-      <button class="menu-item" type="button" data-size="stair-plain-470x1200-12" onclick="jumpSpec('stair-plain-470x1200-12', 'stair')">Regular 470x1200x12mm</button>
-      <button class="menu-item" type="button" data-size="stair-plain-470x1200-15" onclick="jumpSpec('stair-plain-470x1200-15', 'stair')">Regular 470x1200x15mm</button>
+      <button class="menu-item" type="button" data-size="stair-470x1200-12" onclick="jumpSpec('stair-470x1200-12', 'stair')">470x1200x12mm</button>
+      <button class="menu-item" type="button" data-size="stair-470x1200-15" onclick="jumpSpec('stair-470x1200-15', 'stair')">470x1200x15mm</button>
       <button class="menu-item" type="button" data-size="stair-outdoor" onclick="jumpSpec('stair-outdoor', 'stair')">Outdoor Stair Series</button>
     </div>
   </details>
@@ -1406,8 +1404,10 @@
     },
     {
       series: "stair",
-      sizeKey: "stair-470x1200",
-      label: "Golden Silk 470x1200x12mm",
+      sizeKey: "stair-470x1200-12",
+      label: "470x1200x12mm Stair Step",
+      subgroupLabel: "Golden Silk",
+      mergeKey: "stair-470x1200-12-family",
       folder: "golden-silk-real",
       prefix: "GOLD-SILK-12",
       items: [
@@ -1425,8 +1425,10 @@
     },
     {
       series: "stair",
-      sizeKey: "golden-silk-470x1200-15",
-      label: "Golden Silk 470x1200x15mm",
+      sizeKey: "stair-470x1200-15",
+      label: "470x1200x15mm Stair Step",
+      subgroupLabel: "Golden Silk",
+      mergeKey: "stair-470x1200-15-family",
       folder: "golden-silk-real",
       prefix: "GOLD-SILK-15",
       items: [
@@ -1441,8 +1443,10 @@
     },
     {
       series: "stair",
-      sizeKey: "stair-plain-470x1200-12",
-      label: "Regular Stair Step 470x1200x12mm",
+      sizeKey: "stair-470x1200-12",
+      label: "470x1200x12mm Stair Step",
+      subgroupLabel: "Regular Stair Step",
+      mergeKey: "stair-470x1200-12-family",
       folder: "stair-470-plain-12",
       prefix: "PLAIN-470-12",
       items: [
@@ -1454,8 +1458,10 @@
     },
     {
       series: "stair",
-      sizeKey: "stair-plain-470x1200-15",
-      label: "Regular Stair Step 470x1200x15mm",
+      sizeKey: "stair-470x1200-15",
+      label: "470x1200x15mm Stair Step",
+      subgroupLabel: "Regular Stair Step",
+      mergeKey: "stair-470x1200-15-family",
       folder: "stair-470-plain-15",
       prefix: "PLAIN-470-15",
       items: [
@@ -2067,10 +2073,8 @@
       "wood-200x1200": "Thickness: 9.5mm / approx. 29kg per box / 6 pcs per box",
       "wood-deck-200": "200x1000: thickness 18mm / 37.5kg per box / 5 pcs per box; 200x1200: thickness 18mm / 36kg per box / 4 pcs per box",
       "470x1200": "Thickness: 12mm / 43.5kg per box / 3 pcs per box / pallet: 10 pallets x 56 boxes + 3 pallets x 25 boxes / loose load: 640 boxes",
-      "stair-470x1200": "Thickness: 12mm / 43.5kg per box / 3 pcs per box / pallet: 10 pallets x 56 boxes + 3 pallets x 25 boxes / loose load: 640 boxes",
-      "stair-plain-470x1200-12": "Thickness: 12mm / 43.5kg per box / 3 pcs per box / pallet: 10 pallets x 56 boxes + 3 pallets x 25 boxes / loose load: 640 boxes",
-      "stair-plain-470x1200-15": "Thickness: 15mm / 37kg per box / 2 pcs per box / pallet: 10 pallets x 56 boxes + 6 pallets x 27 boxes + 1 pallet x 23 boxes / loose load: 755 boxes",
-      "golden-silk-470x1200-15": "Thickness: 15mm / 37kg per box / 2 pcs per box / pallet: 10 pallets x 56 boxes + 6 pallets x 27 boxes + 1 pallet x 23 boxes / loose load: 755 boxes",
+      "stair-470x1200-12": "Thickness: 12mm / 43.5kg per box / 3 pcs per box / pallet: 10 pallets x 56 boxes + 3 pallets x 25 boxes / loose load: 640 boxes",
+      "stair-470x1200-15": "Thickness: 15mm / 37kg per box / 2 pcs per box / pallet: 10 pallets x 56 boxes + 6 pallets x 27 boxes + 1 pallet x 23 boxes / loose load: 755 boxes",
       "800x800": "41kg per box / 3 pcs per box",
       "1000-glossy": "Thickness: 9.8+/-0.2mm / 45kg per box / 2 pcs per box / 42 boxes per pallet",
       "1000-rustic": "Thickness: 9.8+/-0.2mm / 45kg per box / 2 pcs per box / 42 boxes per pallet",
@@ -2100,10 +2104,8 @@
       "750x750": "Water absorption: <=0.5%",
       "600x1200": "Water absorption: <=0.5%",
       "470x1200": "Water absorption: 0.5-3%",
-      "stair-470x1200": "Water absorption: 0.5-3%",
-      "stair-plain-470x1200-12": "Water absorption: 0.5-3%",
-      "stair-plain-470x1200-15": "Water absorption: 0.5-3%",
-      "golden-silk-470x1200-15": "Water absorption: 0.5-3%",
+      "stair-470x1200-12": "Water absorption: 0.5-3%",
+      "stair-470x1200-15": "Water absorption: 0.5-3%",
       "800x800": "Water absorption: 0.5-3%",
       "1000-glossy": "Water absorption: <=0.5%",
       "1000-rustic": "Water absorption: <=0.5%",
