@@ -44,6 +44,22 @@
       border-bottom: 1px solid rgba(80, 60, 40, 0.08);
     }
 
+    .nav-collapse-toggle {
+      width: 100%;
+      border: 0;
+      background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+      color: #fff;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+    }
+
+    body.nav-collapsed .hero-inner {
+      display: none;
+    }
+
     .hero-inner {
       width: min(1440px, calc(100% - 32px));
       margin: 0 auto;
@@ -265,6 +281,7 @@
 </head>
 <body>
   <header class="hero">
+    <button class="nav-collapse-toggle" type="button" onclick="toggleNavCollapse()" aria-expanded="true"></button>
     <div class="hero-inner">
       <div class="topline">
         <div class="brand">
@@ -314,6 +331,9 @@
         items: "mau",
         packing: "Dong goi",
         test: "Chi tieu"
+        ,
+        hideNav: "An thanh dieu huong",
+        showNav: "Hien thanh dieu huong"
       },
       en: {
         pageTitle: "Custom-fired Wood Grain Catalog",
@@ -324,7 +344,9 @@
         specs: "Specs",
         items: "items",
         packing: "Packing",
-        test: "Test"
+        test: "Test",
+        hideNav: "Hide navigation",
+        showNav: "Show navigation"
       }
     };
 
@@ -398,6 +420,7 @@
       document.querySelector("#backMain").textContent = t("backMain");
       document.querySelector("#toTop").textContent = t("top");
       document.querySelector("#toBottom").textContent = t("bottom");
+      updateNavToggle();
       document.title = currentLang === "vi" ? "Bo suu tap van go dat nung" : "Custom-fired Wood Grain Catalog";
       renderTabs(data);
       renderSections(data);
@@ -416,6 +439,18 @@
     function closeLightbox(event) {
       if (event && event.target !== event.currentTarget) return;
       document.querySelector("#lightbox").classList.remove("open");
+    }
+
+    function toggleNavCollapse() {
+      document.body.classList.toggle("nav-collapsed");
+      updateNavToggle();
+    }
+
+    function updateNavToggle() {
+      const button = document.querySelector(".nav-collapse-toggle");
+      const collapsed = document.body.classList.contains("nav-collapsed");
+      button.textContent = collapsed ? `${t("showNav")} ▾` : `${t("hideNav")} ▴`;
+      button.setAttribute("aria-expanded", String(!collapsed));
     }
 
     document.querySelectorAll(".lang-btn").forEach((btn) => {
