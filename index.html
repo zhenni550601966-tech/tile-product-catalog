@@ -141,6 +141,10 @@
     font-size: 11px;
   }
 
+  .mobile-menu-toggle {
+    display: none;
+  }
+
   .cat-tabs {
     position: sticky;
     top: var(--filter-height);
@@ -614,26 +618,55 @@
     }
 
     .count-text { margin-left: 0; width: 100%; }
+    .mobile-menu-toggle {
+      position: sticky;
+      top: var(--filter-height);
+      z-index: 65;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 14px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: #eee3d3;
+      color: var(--sage);
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(34,32,25,.08);
+    }
     .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .placeholder-grid { grid-template-columns: 1fr; }
     .section-header { align-items: flex-start; flex-direction: column; }
     .cat-tabs {
       position: sticky;
-      top: var(--filter-height);
+      top: calc(var(--filter-height) + var(--quick-height));
       z-index: 60;
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
       justify-content: flex-start;
-      overflow-x: auto;
+      gap: 8px;
+      overflow-y: auto;
       flex-wrap: nowrap;
       padding: 10px 12px;
+      max-height: calc(100vh - var(--filter-height) - var(--quick-height));
+    }
+    .cat-tabs.mobile-open {
+      display: flex;
     }
     .cat-tabs.menu-open {
-      overflow: visible;
-      flex-wrap: wrap;
+      overflow-y: auto;
     }
     .series-menu[open] {
-      flex-basis: 100%;
+      flex-basis: auto;
     }
-    .tab { white-space: nowrap; }
+    .tab {
+      width: 100%;
+      justify-content: space-between;
+      white-space: normal;
+    }
     main {
       padding: 18px 10px 34px;
     }
@@ -740,6 +773,8 @@
   </select>
   <span id="filterCount" class="count-text"></span>
 </div>
+
+<button class="mobile-menu-toggle" type="button" onclick="toggleMobileSeriesMenu()">Series Menu ▾</button>
 
 <div class="cat-tabs">
   <button class="tab active" type="button" data-section="all" onclick="jumpAll()">All Series</button>
@@ -1451,6 +1486,7 @@
     "Product image": "Hình sản phẩm",
     "Product view, detail view, and application view": "Hình sản phẩm, chi tiết và phối cảnh",
     "Real product view, electronic render, detail view, and application view": "Hình thực tế, hình phối cảnh, chi tiết và ứng dụng",
+    "Series Menu ▾": "Menu dòng sản phẩm ▾",
     "Close": "Đóng",
     "Click Close, press Esc, or click outside the image to return.": "Bấm Đóng, nhấn Esc hoặc bấm ngoài hình để quay lại."
   };
@@ -1479,6 +1515,7 @@
       ".filter-bar label",
       ".filter-bar option",
       ".reset-btn",
+      ".mobile-menu-toggle",
       ".tab",
       ".menu-item",
       ".lb-close",
@@ -1845,7 +1882,18 @@
     document.querySelectorAll(".series-menu[open]").forEach((menu) => {
       menu.removeAttribute("open");
     });
+    closeMobileSeriesMenu();
     updateMenuOpenState();
+  }
+
+  function toggleMobileSeriesMenu() {
+    const tabs = document.querySelector(".cat-tabs");
+    tabs?.classList.toggle("mobile-open");
+    setStickyOffsets();
+  }
+
+  function closeMobileSeriesMenu() {
+    document.querySelector(".cat-tabs")?.classList.remove("mobile-open");
   }
 
   function updateMenuOpenState() {
@@ -1857,9 +1905,11 @@
   function setStickyOffsets() {
     const filter = document.querySelector(".filter-bar");
     const tabs = document.querySelector(".cat-tabs");
+    const mobileToggle = document.querySelector(".mobile-menu-toggle");
+    const mobileToggleHeight = window.matchMedia("(max-width: 760px)").matches ? mobileToggle.offsetHeight : 0;
     document.documentElement.style.setProperty("--filter-height", `${filter.offsetHeight}px`);
     document.documentElement.style.setProperty("--tabs-height", `${tabs.offsetHeight}px`);
-    document.documentElement.style.setProperty("--quick-height", "0px");
+    document.documentElement.style.setProperty("--quick-height", `${mobileToggleHeight}px`);
     positionOpenSeriesMenu();
   }
 
@@ -1952,7 +2002,7 @@
   window.addEventListener("scroll", updateFloatingNav);
 
   document.addEventListener("click", (event) => {
-    if (!event.target.closest(".series-menu")) closeSeriesMenus();
+    if (!event.target.closest(".series-menu") && !event.target.closest(".mobile-menu-toggle")) closeSeriesMenus();
   });
 
   document.querySelectorAll(".series-menu").forEach((menu) => {
