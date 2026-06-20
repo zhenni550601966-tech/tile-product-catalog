@@ -358,9 +358,23 @@
 
     let currentLang = "vi";
     let flatItems = [];
+    const ASSET_CDN_BASE = "https://adanye-tech.github.io/tile-product-catalog/";
 
     function t(key) {
       return copy[currentLang][key];
+    }
+
+    function assetUrl(path) {
+      if (!path || !path.startsWith("assets/")) return path;
+      if (location.protocol === "file:" || location.hostname === "falanbosstile.com") {
+        return `${ASSET_CDN_BASE}${path}`;
+      }
+      return path;
+    }
+
+    function thumbUrl(path) {
+      if (!path || !path.startsWith("assets/")) return assetUrl(path);
+      return assetUrl(`assets/card-thumbs/${path.slice("assets/".length)}`);
     }
 
     function sectionTitle(group) {
@@ -386,7 +400,7 @@
           return `
             <button class="card" type="button" onclick="openLightbox(${idx})">
               <div class="frame">
-                <img src="${item.image}" alt="${item.code}" loading="lazy">
+                <img src="${thumbUrl(item.image)}" alt="${item.code}" loading="lazy">
                 <div class="caption">
                   <div class="code">${item.code}</div>
                   <div class="series-tag">${labelMap[group.sizeKey][currentLang]} / ${group.items.length} ${t("items")}</div>
@@ -431,7 +445,7 @@
       const item = flatItems[index];
       if (!item) return;
       document.querySelector("#lbCode").textContent = item.code;
-      document.querySelector("#lbImage").src = item.image;
+      document.querySelector("#lbImage").src = assetUrl(item.image);
       document.querySelector("#lbImage").alt = item.code;
       document.querySelector("#lightbox").classList.add("open");
     }
