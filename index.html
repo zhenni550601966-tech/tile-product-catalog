@@ -1,0 +1,1947 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tile Product Catalog</title>
+<style>
+  :root {
+    --ink: #222019;
+    --sage: #39483d;
+    --sage-2: #4f5f51;
+    --bone: #f5efe3;
+    --paper: #fffaf0;
+    --clay: #b76437;
+    --ochre: #d49a58;
+    --line: #d7c8b4;
+    --muted: #756c5e;
+    --white: #fffdf8;
+    --shadow: 0 14px 34px rgba(34, 32, 25, .12);
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --filter-height: 66px;
+    --tabs-height: 58px;
+    --quick-height: 0px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--bone);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  button, select { font: inherit; }
+  a { color: inherit; text-decoration: none; }
+
+  .hero {
+    padding: 42px 22px 34px;
+    background:
+      linear-gradient(135deg, rgba(57,72,61,.92), rgba(34,32,25,.78)),
+      radial-gradient(circle at 18% 28%, rgba(212,154,88,.38), transparent 28%);
+    color: var(--paper);
+    text-align: center;
+  }
+
+  .hero h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(34px, 5vw, 58px);
+    font-weight: 400;
+    line-height: 1;
+  }
+
+  .hero p {
+    margin: 14px auto 0;
+    max-width: 760px;
+    color: rgba(255,250,240,.78);
+  }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+
+  .stat {
+    min-width: 128px;
+    padding: 11px 14px;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 8px;
+    background: rgba(255,255,255,.08);
+  }
+
+  .stat b { display: block; font-size: 20px; }
+  .stat span {
+    display: block;
+    margin-top: 2px;
+    color: rgba(255,250,240,.66);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .filter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 31;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 14px 22px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .filter-bar label {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  select, .reset-btn {
+    min-height: 38px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--ink);
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  select {
+    max-width: 100%;
+  }
+
+  .reset-btn {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: var(--paper);
+  }
+
+  .count-text {
+    margin-left: auto;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  .cat-tabs {
+    position: sticky;
+    top: var(--filter-height);
+    z-index: 30;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 12px 22px;
+    background: #eee3d3;
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 10px 24px rgba(34,32,25,.08);
+  }
+
+  .series-menu {
+    position: relative;
+  }
+
+  .series-menu summary {
+    list-style: none;
+  }
+
+  .series-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--clay);
+    border-radius: 999px;
+    padding: 10px 18px;
+    background: var(--white);
+    color: var(--sage);
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .tab:hover, .tab.active {
+    background: var(--clay);
+    color: var(--paper);
+  }
+
+  .series-menu[open] .tab {
+    background: var(--clay);
+    color: var(--paper);
+  }
+
+  .series-dropdown {
+    position: fixed;
+    top: calc(var(--filter-height) + var(--tabs-height) + 10px);
+    left: var(--dropdown-left, max(22px, calc((100vw - 1380px) / 2 + 22px)));
+    z-index: 45;
+    width: min(360px, calc(100vw - 44px));
+    display: grid;
+    gap: 6px;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    box-shadow: 0 18px 42px rgba(34,32,25,.22);
+  }
+
+  .menu-item {
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--sage);
+    padding: 9px 10px;
+    text-align: left;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .menu-item:hover, .menu-item.active {
+    background: var(--sage);
+    color: var(--paper);
+  }
+
+  main {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 24px 18px 60px;
+  }
+
+  .series-section {
+    margin-bottom: 30px;
+    scroll-margin-top: calc(var(--filter-height) + var(--tabs-height) + var(--quick-height) + 18px);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px 22px;
+    border-radius: 8px 8px 0 0;
+    background: var(--sage);
+    color: var(--paper);
+    border-bottom: 3px solid var(--ochre);
+  }
+
+  .section-header h2 {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 400;
+  }
+
+  .section-header span {
+    color: rgba(255,250,240,.68);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .spec-block {
+    margin-top: 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--white);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .spec-block.hidden { display: none; }
+
+  .spec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 18px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+  }
+
+  .spec-name {
+    font-weight: 750;
+    color: var(--sage);
+  }
+
+  .spec-meta {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+  }
+
+  .spec-detail {
+    display: block;
+    margin-top: 5px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .toggle {
+    color: var(--muted);
+    transition: transform .18s ease;
+  }
+
+  .spec-block.collapsed .toggle { transform: rotate(-90deg); }
+  .spec-block.collapsed .product-grid { display: none; }
+  .spec-block.collapsed .spec-subgroup { display: none; }
+
+  .spec-subgroup.hidden { display: none; }
+
+  .subspec-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px 0;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 750;
+  }
+
+  .subspec-title span {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .subspec-title small {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .product-card {
+    border: 1px solid #eadfce;
+    border-radius: 8px;
+    background: #fff;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px rgba(34,32,25,.16);
+  }
+
+  .product-card.hidden { display: none; }
+
+  .product-card img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: contain;
+    display: block;
+    background: #f6efe4;
+  }
+
+  .card-info {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 11px;
+  }
+
+  .code {
+    color: var(--sage);
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  .size {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    max-width: 56%;
+    text-align: right;
+  }
+
+  .placeholder-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .placeholder-card {
+    min-height: 140px;
+    border: 1px dashed var(--line);
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    color: var(--muted);
+    text-align: center;
+    background: #fbf6ed;
+  }
+
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 28px 96px;
+    background: rgba(15, 16, 13, .94);
+  }
+
+  .lightbox.active { display: flex; }
+
+  .lightbox img {
+    max-width: min(92vw, 1180px);
+    max-height: 82vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 22px 70px rgba(0,0,0,.5);
+  }
+
+  .lb-close, .lb-nav {
+    position: absolute;
+    z-index: 3;
+    border: 1px solid rgba(255,255,255,.2);
+    background: rgba(20,20,18,.72);
+    color: white;
+    cursor: pointer;
+  }
+
+  .lb-close {
+    top: 20px;
+    right: 22px;
+    min-width: 92px;
+    height: 42px;
+    padding: 0 14px;
+    font-size: 14px;
+    font-weight: 750;
+  }
+
+  .lb-nav {
+    top: 50%;
+    transform: translateY(-50%);
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 999px;
+    font-size: 38px;
+    line-height: 1;
+    box-shadow: 0 12px 34px rgba(0,0,0,.34);
+  }
+
+  .lb-nav:hover {
+    background: var(--ochre);
+    color: var(--ink);
+  }
+
+  .lb-nav.prev { left: max(18px, env(safe-area-inset-left)); }
+  .lb-nav.next { right: max(18px, env(safe-area-inset-right)); }
+
+  .lb-caption {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    bottom: 60px;
+    color: rgba(255,255,255,.78);
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+  }
+
+  .lb-thumbs {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    bottom: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 0;
+  }
+
+  .lb-thumb {
+    width: 54px;
+    height: 42px;
+    border: 1px solid rgba(255,255,255,.24);
+    border-radius: 6px;
+    padding: 0;
+    background: rgba(255,255,255,.08);
+    overflow: hidden;
+    cursor: pointer;
+    opacity: .68;
+  }
+
+  .lb-thumb.active {
+    border-color: var(--ochre);
+    opacity: 1;
+  }
+
+  .lb-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .lb-help {
+    display: block;
+    margin-top: 5px;
+    color: rgba(255,255,255,.52);
+    font-size: 11px;
+  }
+
+  .floating-nav {
+    position: fixed;
+    right: 18px;
+    z-index: 40;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(255,255,255,.42);
+    border-radius: 999px;
+    background: var(--sage);
+    color: var(--paper);
+    box-shadow: 0 12px 28px rgba(34,32,25,.24);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity .18s ease, transform .18s ease, background .18s ease;
+  }
+
+  .floating-nav.to-top {
+    bottom: 18px;
+  }
+
+  .floating-nav.to-bottom {
+    bottom: 76px;
+  }
+
+  .floating-nav.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  .floating-nav:hover {
+    background: var(--ochre);
+    color: var(--ink);
+  }
+
+  @media (max-width: 1100px) {
+    .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 760px) {
+    .hero {
+      padding: 28px 14px 24px;
+    }
+
+    .hero h1 {
+      font-size: 34px;
+    }
+
+    .filter-bar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 8px;
+      padding: 10px 12px;
+    }
+
+    .filter-bar label {
+      display: none;
+    }
+
+    .filter-bar select,
+    .filter-bar .reset-btn {
+      width: 100%;
+      min-width: 0;
+      min-height: 36px;
+      padding: 7px 9px;
+      font-size: 13px;
+    }
+
+    .filter-bar .reset-btn {
+      grid-column: span 1;
+    }
+
+    .count-text { margin-left: 0; width: 100%; }
+    .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .placeholder-grid { grid-template-columns: 1fr; }
+    .section-header { align-items: flex-start; flex-direction: column; }
+    .cat-tabs {
+      justify-content: flex-start;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding: 10px 12px;
+    }
+    .tab { white-space: nowrap; }
+    main {
+      padding: 18px 10px 34px;
+    }
+    .spec-header {
+      align-items: flex-start;
+      padding: 12px;
+    }
+    .spec-name {
+      display: block;
+      line-height: 1.25;
+    }
+    .spec-detail {
+      font-size: 11px;
+    }
+    .product-grid {
+      gap: 10px;
+      padding: 10px;
+    }
+    .card-info {
+      padding: 9px;
+    }
+    .code {
+      font-size: 13px;
+    }
+    .size {
+      font-size: 10px;
+    }
+    .series-dropdown {
+      left: 12px;
+      right: 12px;
+      top: calc(var(--filter-height) + var(--tabs-height) + 8px);
+      width: auto;
+      max-height: 54vh;
+      overflow-y: auto;
+    }
+    .lightbox { padding: 72px 12px 108px; }
+    .lightbox img { max-width: 100%; max-height: 74vh; }
+    .lb-close { top: 14px; right: 14px; }
+    .lb-nav {
+      width: 46px;
+      height: 46px;
+      font-size: 32px;
+    }
+    .lb-nav.prev { left: 10px; }
+    .lb-nav.next { right: 10px; }
+    .floating-nav {
+      right: 12px;
+      width: 44px;
+      height: 44px;
+    }
+
+    .floating-nav.to-top { bottom: 12px; }
+    .floating-nav.to-bottom { bottom: 64px; }
+  }
+
+  @media (max-width: 430px) {
+    .product-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 30px; }
+  }
+
+  @media print {
+    .filter-bar, .cat-tabs { display: none; }
+    main { max-width: none; padding: 0; }
+    .spec-block { break-inside: avoid; box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <h1>Tile Product Catalog</h1>
+</header>
+
+<div class="filter-bar">
+  <label for="sizeFilter">Filter by size</label>
+  <select id="sizeFilter" onchange="applySizeFilter()">
+    <option value="">All sizes</option>
+    <option value="150x900">150x900mm</option>
+    <option value="200x1000">200x1000mm</option>
+    <option value="200x1200">200x1200mm</option>
+    <option value="300x1200">300x1200mm</option>
+    <option value="470x1200">470x1200mm</option>
+    <option value="600x1200">600x1200mm</option>
+    <option value="720x900">720x900mm</option>
+    <option value="750x750">750x750mm</option>
+    <option value="750x1350">750x1350mm</option>
+    <option value="800x800">800x800mm</option>
+    <option value="1000x1000">1000x1000mm</option>
+    <option value="1200x1200">1200x1200mm</option>
+  </select>
+  <label for="seriesFilter">Series</label>
+  <select id="seriesFilter" onchange="applySeriesFilter()">
+    <option value="">All series</option>
+    <option value="wood">Wood Grain</option>
+    <option value="stair">Stair Step Series</option>
+    <option value="tile800">800x800 Series</option>
+    <option value="tile1000">1000x1000 Series</option>
+    <option value="tile1200">1200x1200 Series</option>
+    <option value="carpet">Carpet</option>
+  </select>
+  <button class="reset-btn" type="button" onclick="resetFilters()">Reset</button>
+  <label for="languageFilter">Language</label>
+  <select id="languageFilter" onchange="setLanguage(this.value)">
+    <option value="en">English</option>
+    <option value="vi" selected>Tiếng Việt</option>
+  </select>
+  <span id="filterCount" class="count-text"></span>
+</div>
+
+<div class="cat-tabs">
+  <button class="tab active" type="button" data-section="all" onclick="jumpAll()">All Series</button>
+  <details class="series-menu">
+    <summary class="tab" data-section="wood">Wood Grain ▾</summary>
+    <div class="series-dropdown">
+      <button class="menu-item" type="button" data-size="" onclick="jumpSeries('wood')">All Wood Grain</button>
+      <button class="menu-item" type="button" data-size="750x750" onclick="jumpSpec('750x750', 'wood')">750x750</button>
+      <button class="menu-item" type="button" data-size="600x1200" onclick="jumpSpec('600x1200', 'wood')">600x1200</button>
+      <button class="menu-item" type="button" data-size="wood-150x900" onclick="jumpSpec('wood-150x900', 'wood')">150x900</button>
+      <button class="menu-item" type="button" data-size="wood-200x1000" onclick="jumpSpec('wood-200x1000', 'wood')">200x1000</button>
+      <button class="menu-item" type="button" data-size="wood-200x1200" onclick="jumpSpec('wood-200x1200', 'wood')">200x1200</button>
+      <button class="menu-item" type="button" data-size="470x1200" onclick="jumpSpec('470x1200', 'wood')">Wood Grain 470x1200x12mm</button>
+      <button class="menu-item" type="button" data-size="stair-600-300x1200" onclick="jumpSpec('stair-600-300x1200', 'wood')">Wood Grain 300x1200x15/18mm</button>
+      <button class="menu-item" type="button" data-size="wood-deck-200" onclick="jumpSpec('wood-deck-200', 'wood')">Deck 200x1000 / 200x1200</button>
+    </div>
+  </details>
+  <details class="series-menu">
+    <summary class="tab" data-section="stair">Stair Step Series ▾</summary>
+    <div class="series-dropdown">
+      <button class="menu-item" type="button" data-size="" onclick="jumpSeries('stair')">All Stair Step</button>
+      <button class="menu-item" type="button" data-size="stair-470x1200" onclick="jumpSpec('stair-470x1200', 'stair')">Golden Silk 470x1200x12mm</button>
+      <button class="menu-item" type="button" data-size="golden-silk-470x1200-15" onclick="jumpSpec('golden-silk-470x1200-15', 'stair')">Golden Silk 470x1200x15mm</button>
+      <button class="menu-item" type="button" data-size="stair-outdoor" onclick="jumpSpec('stair-outdoor', 'stair')">Outdoor Stair Series</button>
+    </div>
+  </details>
+  <details class="series-menu">
+    <summary class="tab" data-section="tile800">800x800 Series ▾</summary>
+    <div class="series-dropdown">
+      <button class="menu-item" type="button" data-size="" onclick="jumpSeries('tile800')">All 800x800</button>
+      <button class="menu-item" type="button" data-size="800x800" onclick="jumpSpec('800x800', 'tile800')">800x800</button>
+    </div>
+  </details>
+  <details class="series-menu">
+    <summary class="tab" data-section="tile1000">1000x1000 Series ▾</summary>
+    <div class="series-dropdown">
+      <button class="menu-item" type="button" data-size="" onclick="jumpSeries('tile1000')">All 1000x1000</button>
+      <button class="menu-item" type="button" data-size="1000-glossy" onclick="jumpSpec('1000-glossy', 'tile1000')">Glossy Surface</button>
+      <button class="menu-item" type="button" data-size="1000-rustic" onclick="jumpSpec('1000-rustic', 'tile1000')">Rustic Surface</button>
+    </div>
+  </details>
+  <details class="series-menu">
+    <summary class="tab" data-section="tile1200">1200x1200 Series ▾</summary>
+    <div class="series-dropdown">
+      <button class="menu-item" type="button" data-size="" onclick="jumpSeries('tile1200')">All 1200x1200</button>
+      <button class="menu-item" type="button" data-size="1200x1200" onclick="jumpSpec('1200x1200', 'tile1200')">1200x1200</button>
+    </div>
+  </details>
+  <details class="series-menu">
+    <summary class="tab" data-section="carpet">Carpet Series ▾</summary>
+    <div class="series-dropdown">
+      <button class="menu-item" type="button" data-size="" onclick="jumpSeries('carpet')">All Carpet</button>
+      <button class="menu-item" type="button" data-size="carpet-720x900" onclick="jumpSpec('carpet-720x900', 'carpet')">720x900mm</button>
+      <button class="menu-item" type="button" data-size="carpet-750x1350" onclick="jumpSpec('carpet-750x1350', 'carpet')">750x1350mm</button>
+    </div>
+  </details>
+</div>
+
+<main id="catalog"></main>
+
+<button id="toBottom" class="floating-nav to-bottom" type="button" onclick="scrollToBottom()" aria-label="Go to bottom">↓</button>
+<button id="backTop" class="floating-nav to-top" type="button" onclick="scrollToTop()" aria-label="Back to top">↑</button>
+
+<div id="lightbox" class="lightbox" aria-label="Product image preview">
+  <button class="lb-close" type="button" onclick="closeLightbox()" aria-label="Close">Close</button>
+  <button class="lb-nav prev" type="button" onclick="moveLightbox(-1)" aria-label="Previous">&#8249;</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-nav next" type="button" onclick="moveLightbox(1)" aria-label="Next">&#8250;</button>
+  <div class="lb-caption">
+    <div id="lb-caption"></div>
+    <span class="lb-help">Click Close, press Esc, or click outside the image to return.</span>
+  </div>
+  <div id="lb-thumbs" class="lb-thumbs"></div>
+</div>
+
+<script>
+  function carpetGallery(prefix, code) {
+    return [
+      `assets/carpet-pdf/${prefix}-${code}-main.jpg`,
+      `assets/carpet-pdf/${prefix}-${code}-detail.jpg`,
+      `assets/carpet-pdf/${prefix}-${code}-application-1.jpg`,
+      `assets/carpet-pdf/${prefix}-${code}-application-2.jpg`
+    ];
+  }
+
+  function singleImageItems(prefix, codes) {
+    return codes.map((code, index) => ({
+      code,
+      gallery: [`assets/wood-new/${prefix}-${String(index + 1).padStart(3, "0")}.jpg`]
+    }));
+  }
+
+  function numberedImageItems(folder, filePrefix, entries) {
+    return entries.map(([fileNumber, code]) => ({
+      code,
+      gallery: [`assets/wood-images/${folder}/${filePrefix}-${String(fileNumber).padStart(3, "0")}.jpg`]
+    }));
+  }
+
+  function assetItems(folder, filePrefix, codes) {
+    return codes.map((code, index) => ({
+      code,
+      gallery: [`assets/${folder}/${filePrefix}-${String(index + 1).padStart(3, "0")}.jpg`]
+    }));
+  }
+
+  const specGroups = [
+    {
+      series: "wood",
+      sizeKey: "750x750",
+      label: "750 x 750",
+      folder: "750x750",
+      prefix: "WOOD-750",
+      items: numberedImageItems("750x750", "WOOD-750", [
+        [1, "精雕85307"],
+        [2, "精雕85306"],
+        [3, "75316"],
+        [4, "精雕85302"],
+        [5, "精雕75308"],
+        [6, "85317"],
+        [7, "精雕75310"],
+        [8, "精雕85313"],
+        [9, "精雕75311"],
+        [10, "精雕85312"],
+        [11, "精雕75309"],
+        [12, "85305"],
+        [13, "75303"],
+        [14, "75301"],
+        [15, "753022"],
+        [16, "753025"],
+        [17, "753023"],
+        [18, "75315"],
+        [19, "753027"],
+        [20, "753026"],
+        [21, "75319"],
+        [22, "75318"]
+      ])
+    },
+    {
+      series: "wood",
+      sizeKey: "600x1200",
+      label: "Wood Grain 600x1200mm",
+      folder: "600x1200",
+      prefix: "WOOD-600",
+      mergeKey: "wood-600x1200-family",
+      subgroupLabel: "Regular Wood Grain",
+      items: numberedImageItems("600x1200", "WOOD-600", [
+        [1, "TB613009"],
+        [2, "TB613010"],
+        [3, "TB613011"],
+        [4, "TB613012"],
+        [5, "TB613013"],
+        [6, "TB613015"],
+        [7, "TB613016"],
+        [8, "TB613017"],
+        [9, "TB613019"],
+        [10, "TB613020"],
+        [12, "TB613021"],
+        [13, "TB613022"],
+        [16, "TB613001"],
+        [17, "TB613002"],
+        [18, "TB613003"],
+        [19, "TB613005"],
+        [20, "TB613006"],
+        [21, "TB613007"],
+        [22, "TB613008"]
+      ])
+    },
+    {
+      series: "wood",
+      sizeKey: "600x1200",
+      label: "Wood Grain 600x1200 Lotus Series",
+      folder: "600x1200",
+      prefix: "WOOD-600-LOTUS",
+      mergeKey: "wood-600x1200-family",
+      subgroupLabel: "Lotus Series",
+      items: numberedImageItems("600x1200", "WOOD-600", [
+        [23, "TB613038"],
+        [24, "TB613037"],
+        [25, "TB613036"],
+        [30, "TB613035"],
+        [31, "TB613033"]
+      ])
+    },
+    {
+      series: "wood",
+      sizeKey: "600x1200",
+      label: "Wood Grain 600x1200 Castle Stone Series",
+      folder: "600x1200",
+      prefix: "WOOD-600-CASTLE",
+      mergeKey: "wood-600x1200-family",
+      subgroupLabel: "Castle Stone Series",
+      items: numberedImageItems("600x1200", "WOOD-600", [
+        [28, "TB613026"],
+        [29, "TB613025"]
+      ])
+    },
+    {
+      series: "wood",
+      sizeKey: "wood-150x900",
+      label: "Wood Grain 150x900mm",
+      folder: "wood-new",
+      prefix: "WOOD-150x900",
+      items: singleImageItems("wood-150x900", [
+        "1501", "1502", "1503", "1505", "1507", "1508", "1509", "1510",
+        "159001", "159003", "159006", "159008", "159011", "159013",
+        "G159002", "G159005", "G159007", "G159009", "G159010", "G159012"
+      ])
+    },
+    {
+      series: "wood",
+      sizeKey: "wood-200x1000",
+      label: "Wood Grain 200x1000mm",
+      folder: "wood-new",
+      prefix: "WOOD-200x1000",
+      mergeKey: "wood-200x1000-family",
+      subgroupLabel: "Regular Wood Grain",
+      items: singleImageItems("wood-200x1000", [
+        "21002", "21003", "21006", "21007", "21010", "21011", "21012", "21013",
+        "21015", "21016", "21017", "21018", "21019", "21020", "21021", "21022",
+        "1101", "1102", "1103", "1105", "1106", "1107", "1108", "1109",
+        "1110", "1111", "1112", "1113", "1115", "1116"
+      ])
+    },
+    {
+      series: "wood",
+      sizeKey: "wood-200x1000",
+      label: "Wood Grain 200x1000mm Digital Glaze",
+      folder: "wood-new",
+      prefix: "WOOD-200x1000-DIGITAL",
+      mergeKey: "wood-200x1000-family",
+      subgroupLabel: "Digital Glaze",
+      items: singleImageItems("wood-200x1000-digital", [
+        "FLS11001", "FLS11002", "FLS11003", "FLS11005",
+        "FLS11006", "FLS11007", "FLS11008", "FLS11009"
+      ])
+    },
+    {
+      series: "wood",
+      sizeKey: "wood-200x1200",
+      label: "Wood Grain 200x1200mm",
+      folder: "wood-new",
+      prefix: "WOOD-200x1200",
+      items: singleImageItems("wood-200x1200", [
+        "12301", "12302", "12303", "12305", "12306", "12309",
+        "12361", "12362", "12363", "12365", "FL2201", "FL2202",
+        "FL2203", "FL2205", "FL2206", "FL2207", "FL2208", "FL2209"
+      ])
+    },
+    { series: "wood", sizeKey: "470x1200", label: "Wood Grain 470x1200x12mm", folder: "470x1200-12mm", prefix: "WOOD-470", count: 8 },
+    {
+      series: "wood",
+      sizeKey: "wood-deck-200",
+      label: "Wood Deck / 200x1000mm / 200x1200mm / Thickness: 18mm",
+      folder: "wood-deck",
+      prefix: "DECK",
+      items: [
+        {
+          code: "ZD1801 / ZD2801",
+          gallery: [
+            "assets/deck-real/ZD1801-ZD2801-main.jpg",
+            "assets/deck-real/ZD1801-ZD2801-effect.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1801-ZD2801-detail.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1801-ZD2801-effect-1.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1801-ZD2801-effect-2.jpg"
+          ]
+        },
+        {
+          code: "ZD1802 / ZD2802",
+          gallery: [
+            "assets/deck-real/ZD1802-ZD2802-main.jpg",
+            "assets/deck-real/ZD1802-ZD2802-effect.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1802-ZD2802-detail.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1802-ZD2802-effect-1.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1802-ZD2802-effect-2.jpg"
+          ]
+        },
+        {
+          code: "ZD1803 / ZD2803",
+          gallery: [
+            "assets/deck-real/ZD1803-ZD2803-main.jpg",
+            "assets/deck-real/ZD1803-ZD2803-effect.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1803-ZD2803-detail.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1803-ZD2803-effect-1.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1803-ZD2803-effect-2.jpg"
+          ]
+        },
+        {
+          code: "ZD1805 / ZD2805",
+          gallery: [
+            "assets/deck-real/ZD1805-ZD2805-main.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1805-ZD2805-detail.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1805-ZD2805-effect-1.jpg",
+            "assets/pdf-gallery/wood-deck/ZD1805-ZD2805-effect-2.jpg"
+          ]
+        }
+      ]
+    },
+    {
+      series: "wood",
+      sizeKey: "stair-600-300x1200",
+      label: "Wood Grain / 300x1200x15mm / 18mm",
+      folder: "stair-step-new",
+      prefix: "STAIR-NEW",
+      mergeKey: "wood-grain-stair-300x1200",
+      items: [
+        { code: "FD15001MF / FD18001MF / FD612001MF", gallery: ["assets/fighter-300-real/FD001.jpg", "assets/fighter-300-logo-free/STAIR-NEW-001-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-001-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-001-application.jpg"] },
+        { code: "FD15002MF / FD18002MF / FD612002MF", gallery: ["assets/fighter-300-real/FD002.jpg", "assets/fighter-300-logo-free/STAIR-NEW-002-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-002-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-002-application.jpg"] },
+        { code: "FD15003MF / FD18003MF / FD612003MF", gallery: ["assets/fighter-300-real/FD003.jpg", "assets/fighter-300-logo-free/STAIR-NEW-003-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-003-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-003-application.jpg"] },
+        { code: "FD15005MF / FD18005MF / FD612005MF", gallery: ["assets/fighter-300-real/FD005.jpg", "assets/fighter-300-logo-free/STAIR-NEW-004-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-004-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-004-application.jpg"] },
+        { code: "FD15006MF / FD18006MF / FD612006MF", gallery: ["assets/fighter-300-real/FD006.jpg", "assets/fighter-300-logo-free/STAIR-NEW-005-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-005-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-005-application.jpg"] },
+        { code: "FD612007MF / FD18007MF", gallery: ["assets/fighter-300-logo-free/STAIR-NEW-006-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-006-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-006-application.jpg"] },
+        { code: "FD15008MF / FD18008MF / FD612008MF", gallery: ["assets/fighter-300-real/FD008.jpg", "assets/fighter-300-logo-free/STAIR-NEW-007-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-007-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-007-application.jpg"] },
+        { code: "FD15009MF / FD18009MF / FD612009MF", gallery: ["assets/fighter-300-real/FD009.jpg", "assets/fighter-300-logo-free/STAIR-NEW-008-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-008-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-008-application.jpg"] },
+        { code: "FD15010MF / FD18010MF / FD612010MF", gallery: ["assets/fighter-300-real/FD010.jpg", "assets/fighter-300-logo-free/STAIR-NEW-009-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-009-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-009-application.jpg"] },
+        { code: "FD15011MF / FD18011MF / FD612011MF", gallery: ["assets/fighter-300-real/FD011.jpg", "assets/fighter-300-logo-free/STAIR-NEW-010-cover.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-010-product.jpg", "assets/pdf-gallery/stair-step-new/STAIR-NEW-010-application.jpg"] }
+      ]
+    },
+    {
+      series: "wood",
+      sizeKey: "stair-600-300x1200",
+      label: "Wood Grain / 300x1200x15mm / 18mm",
+      folder: "stair-step-32",
+      prefix: "STAIR-WOOD",
+      mergeKey: "wood-grain-stair-300x1200",
+      start: 1,
+      count: 7,
+      codes: [
+        "PM612800MF / PM18800MF",
+        "PM612801MF / PM18801MF",
+        "PM612802MF / PM18802MF",
+        "PM612803MF / PM18803MF",
+        "PM612804MF / PM18804MF",
+        "PM612818MF / PM18818MF",
+        "PM612819MF / PM18819MF"
+      ]
+    },
+    {
+      series: "stair",
+      sizeKey: "stair-470x1200",
+      label: "Golden Silk 470x1200x12mm",
+      folder: "golden-silk-real",
+      prefix: "GOLD-SILK-12",
+      items: [
+        { code: "LT47201D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47201D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-015-product.jpg"] },
+        { code: "LT47221D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47221D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-022-product.jpg"] },
+        { code: "LT47223D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47223D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-024-product.jpg"] },
+        { code: "LT47217D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47217D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-018-product.jpg"] },
+        { code: "LT47222D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47222D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-023-product.jpg"] },
+        { code: "LT47203D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47203D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-016-product.jpg"] },
+        { code: "LT47219D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47219D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-020-product.jpg"] },
+        { code: "LT47207D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47207D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-017-product.jpg"] },
+        { code: "LT47220D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47220D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-021-product.jpg"] },
+        { code: "LT47218D", gallery: ["assets/golden-silk-real/golden-silk-12-LT47218D.jpg", "assets/pdf-gallery/stair-step-32/STAIR-32-019-product.jpg"] }
+      ]
+    },
+    {
+      series: "stair",
+      sizeKey: "golden-silk-470x1200-15",
+      label: "Golden Silk 470x1200x15mm",
+      folder: "golden-silk-real",
+      prefix: "GOLD-SILK-15",
+      items: [
+        { code: "FD705D", gallery: ["assets/golden-silk-real/golden-silk-15-FD705D.jpg"] },
+        { code: "FD706D", gallery: ["assets/golden-silk-real/golden-silk-15-FD706D.jpg"] },
+        { code: "FD707D", gallery: ["assets/golden-silk-real/golden-silk-15-FD707D.jpg"] },
+        { code: "FD701D", gallery: ["assets/golden-silk-real/golden-silk-15-FD701D.jpg"] },
+        { code: "FD702D", gallery: ["assets/golden-silk-real/golden-silk-15-FD702D.jpg"] },
+        { code: "FD703D", gallery: ["assets/golden-silk-real/golden-silk-15-FD703D.jpg"] },
+        { code: "FD704D", gallery: ["assets/golden-silk-real/golden-silk-15-FD704D.jpg"] }
+      ]
+    },
+    {
+      series: "stair",
+      sizeKey: "stair-outdoor",
+      label: "Outdoor Stair Series",
+      cardLabel: "Outdoor Stair / 300x1200x15mm / 18mm / 20mm",
+      folder: "stair-step-32",
+      prefix: "OUTDOOR-STEP",
+      mergeKey: "outdoor-stair-family",
+      subgroupLabel: "300x1200x15mm / 18mm / 20mm",
+      pages: [25, 26, 27, 28, 30, 31, 32],
+      codes: [
+        "HB363T19J / HB66123T19J",
+        "HG312L001 / HG612L001",
+        "HG312L002 / HG612L002",
+        "HG312L6 / HG612L6",
+        "HG31213 / HG61213",
+        "HG312021 / HG612021",
+        "HG312706 / HG612706"
+      ]
+    },
+    {
+      series: "stair",
+      sizeKey: "stair-outdoor",
+      label: "Outdoor Stair / 300x1200x18mm",
+      folder: "outdoor-step-real",
+      prefix: "OUTDOOR-300-18",
+      mergeKey: "outdoor-stair-family",
+      subgroupLabel: "300x1200x18mm",
+      items: [
+        { code: "TB312811", gallery: ["assets/outdoor-step-real/300-18-TB312811.jpg"] },
+        { code: "TB312GTB2", gallery: ["assets/outdoor-step-real/300-18-TB312GTB2.jpg"] },
+        { code: "TB312A802", gallery: ["assets/outdoor-step-real/300-18-TB312A802.jpg"] },
+        { code: "TB312HG02", gallery: ["assets/outdoor-step-real/300-18-TB312HG02.jpg"] },
+        { code: "TB312A891", gallery: ["assets/outdoor-step-real/300-18-TB312A891.jpg"] },
+        { code: "TB312HG01", gallery: ["assets/outdoor-step-real/300-18-TB312HG01.jpg"] },
+        { code: "TB312HG11", gallery: ["assets/outdoor-step-real/300-18-TB312HG11.jpg"] }
+      ]
+    },
+    {
+      series: "stair",
+      sizeKey: "stair-outdoor",
+      label: "Outdoor Stair Step / 470x1200mm / Thickness: 15mm",
+      folder: "outdoor-step-real",
+      prefix: "OUTDOOR-470-15",
+      mergeKey: "outdoor-stair-family",
+      subgroupLabel: "470x1200x15mm",
+      items: [
+        { code: "HD1509", gallery: ["assets/outdoor-step-real/470-15-HD1509.jpg"] },
+        { code: "HD1508", gallery: ["assets/outdoor-step-real/470-15-HD1508.jpg"] },
+        { code: "HD1504", gallery: ["assets/outdoor-step-real/470-15-HD1504.jpg"] },
+        { code: "HD1505", gallery: ["assets/outdoor-step-real/470-15-HD1505.jpg"] },
+        { code: "HD1503", gallery: ["assets/outdoor-step-real/470-15-HD1503.jpg"] },
+        { code: "HD1507", gallery: ["assets/outdoor-step-real/470-15-HD1507.jpg"] }
+      ]
+    },
+    {
+      series: "stair",
+      sizeKey: "stair-outdoor",
+      label: "Outdoor Stair / 470x1200x18mm",
+      folder: "outdoor-step-real",
+      prefix: "OUTDOOR-470-18",
+      mergeKey: "outdoor-stair-family",
+      subgroupLabel: "470x1200x18mm",
+      items: [
+        { code: "18HG07", gallery: ["assets/outdoor-step-real/470-18-18HG07.jpg"] },
+        { code: "18HG08", gallery: ["assets/outdoor-step-real/470-18-18HG08.jpg"] },
+        { code: "18HG01", gallery: ["assets/outdoor-step-real/470-18-18HG01.jpg"] },
+        { code: "18HG02", gallery: ["assets/outdoor-step-real/470-18-18HG02.jpg"] },
+        { code: "18HG11", gallery: ["assets/outdoor-step-real/470-18-18HG11.jpg"] },
+        { code: "18HG13", gallery: ["assets/outdoor-step-real/470-18-18HG13.jpg"] }
+      ]
+    },
+    {
+      series: "tile800",
+      sizeKey: "800x800",
+      label: "800x800 Series",
+      folder: "tile-800",
+      prefix: "TILE-800",
+      items: assetItems("tile-800", "tile-800", [
+        "BY80800", "BY80801", "BY80802", "BY80803", "BY80804",
+        "BY80805", "BY80806", "BY80807", "BY80808", "BY80809",
+        "88Y102", "88Y101", "88Y106", "88Y107", "88Y109", "88Y103", "88Y108"
+      ])
+    },
+    {
+      series: "tile1000",
+      sizeKey: "1000-glossy",
+      label: "1000x1000 Glossy Surface",
+      folder: "tiles-1000",
+      prefix: "GLOSSY-1000",
+      items: [
+        { code: "10TB002", gallery: ["assets/tiles-1000/glossy-001.jpg"] },
+        { code: "10TB063", gallery: ["assets/tiles-1000/glossy-002.jpg"] },
+        { code: "10TB028", gallery: ["assets/tiles-1000/glossy-003.jpg"] },
+        { code: "10TB039", gallery: ["assets/tiles-1000/glossy-004.jpg"] },
+        { code: "10TB038", gallery: ["assets/tiles-1000/glossy-005.jpg"] },
+        { code: "10TB058", gallery: ["assets/tiles-1000/glossy-006.jpg"] },
+        { code: "10TB046", gallery: ["assets/tiles-1000/glossy-007.jpg"] },
+        { code: "10TB062", gallery: ["assets/tiles-1000/glossy-008.jpg"] },
+        { code: "10TB048", gallery: ["assets/tiles-1000/glossy-009.jpg"] },
+        { code: "10TB044", gallery: ["assets/tiles-1000/glossy-010.jpg"] },
+        { code: "10TB000", gallery: ["assets/tiles-1000/glossy-011.jpg"] },
+        { code: "10TB057", gallery: ["assets/tiles-1000/glossy-012.jpg"] },
+        { code: "10TB055", gallery: ["assets/tiles-1000/glossy-013.jpg"] },
+        { code: "10TB023", gallery: ["assets/tiles-1000/glossy-014.jpg"] },
+        { code: "10TB049", gallery: ["assets/tiles-1000/glossy-015.jpg"] },
+        { code: "10TB050", gallery: ["assets/tiles-1000/glossy-016.jpg"] },
+        { code: "10TB004", gallery: ["assets/tiles-1000/glossy-017.jpg"] },
+        { code: "10TB047", gallery: ["assets/tiles-1000/glossy-018.jpg"] },
+        { code: "10TB027", gallery: ["assets/tiles-1000/glossy-019.jpg"] },
+        { code: "10TB137", gallery: ["assets/tiles-1000/glossy-020.jpg"] },
+        { code: "10TB136", gallery: ["assets/tiles-1000/glossy-021.jpg"] },
+        { code: "10TB139", gallery: ["assets/tiles-1000/glossy-022.jpg"] },
+        { code: "10TB138", gallery: ["assets/tiles-1000/glossy-023.jpg"] },
+        { code: "10TB037", gallery: ["assets/tiles-1000/glossy-024.jpg"] },
+        { code: "10TB045", gallery: ["assets/tiles-1000/glossy-025.jpg"] },
+        { code: "10TB060", gallery: ["assets/tiles-1000/glossy-026.jpg"] },
+        { code: "10TB043", gallery: ["assets/tiles-1000/glossy-027.jpg"] },
+        { code: "10TB036", gallery: ["assets/tiles-1000/glossy-028.jpg"] },
+        { code: "10TB051", gallery: ["assets/tiles-1000/glossy-029.jpg"] }
+      ]
+    },
+    {
+      series: "tile1000",
+      sizeKey: "1000-rustic",
+      label: "1000x1000 Rustic Surface",
+      folder: "tiles-1000",
+      prefix: "RUSTIC-1000",
+      items: [
+        { code: "10F30", gallery: ["assets/tiles-1000/rustic-001.jpg"] },
+        { code: "10F029", gallery: ["assets/tiles-1000/rustic-002.jpg"] },
+        { code: "10F028", gallery: ["assets/tiles-1000/rustic-003.jpg"] },
+        { code: "10F024", gallery: ["assets/tiles-1000/rustic-004.jpg"] },
+        { code: "10F025", gallery: ["assets/tiles-1000/rustic-005.jpg"] },
+        { code: "10F022", gallery: ["assets/tiles-1000/rustic-006.jpg"] },
+        { code: "10F023", gallery: ["assets/tiles-1000/rustic-007.jpg"] },
+        { code: "10F026", gallery: ["assets/tiles-1000/rustic-008.jpg"] },
+        { code: "10F033", gallery: ["assets/tiles-1000/rustic-009.jpg"] },
+        { code: "10F027", gallery: ["assets/tiles-1000/rustic-010.jpg"] },
+        { code: "10F031", gallery: ["assets/tiles-1000/rustic-011.jpg"] },
+        { code: "10F032", gallery: ["assets/tiles-1000/rustic-012.jpg"] }
+      ]
+    },
+    {
+      series: "tile1200",
+      sizeKey: "1200x1200",
+      label: "1200x1200 Series",
+      folder: "tile-1200",
+      prefix: "TILE-1200",
+      items: [
+        { code: "12TB001", gallery: ["assets/tile-1200/tile-1200-001-main.jpg", "assets/tile-1200/tile-1200-001-detail.jpg"] },
+        { code: "12TB0010", gallery: ["assets/tile-1200/tile-1200-002-main.jpg", "assets/tile-1200/tile-1200-002-detail.jpg"] },
+        { code: "12TB002", gallery: ["assets/tile-1200/tile-1200-003-main.jpg", "assets/tile-1200/tile-1200-003-detail.jpg"] },
+        { code: "12TB003", gallery: ["assets/tile-1200/tile-1200-004-main.jpg", "assets/tile-1200/tile-1200-004-detail.jpg"] },
+        { code: "12TB004", gallery: ["assets/tile-1200/tile-1200-005-main.jpg", "assets/tile-1200/tile-1200-005-detail.jpg"] },
+        { code: "12TB006", gallery: ["assets/tile-1200/tile-1200-006-main.jpg", "assets/tile-1200/tile-1200-006-detail.jpg"] },
+        { code: "12TB007", gallery: ["assets/tile-1200/tile-1200-007-main.jpg", "assets/tile-1200/tile-1200-007-detail.jpg"] },
+        { code: "12TB008", gallery: ["assets/tile-1200/tile-1200-008-main.jpg", "assets/tile-1200/tile-1200-008-detail.jpg"] },
+        { code: "12TB009", gallery: ["assets/tile-1200/tile-1200-009-main.jpg", "assets/tile-1200/tile-1200-009-detail.jpg"] },
+        { code: "12TB011", gallery: ["assets/tile-1200/tile-1200-010-main.jpg", "assets/tile-1200/tile-1200-010-detail.jpg"] },
+        { code: "12TB012", gallery: ["assets/tile-1200/tile-1200-011-main.jpg", "assets/tile-1200/tile-1200-011-detail.jpg"] },
+        { code: "12TB031", gallery: ["assets/tile-1200/tile-1200-012-main.jpg", "assets/tile-1200/tile-1200-012-detail.jpg"] },
+        { code: "12TB032", gallery: ["assets/tile-1200/tile-1200-013-main.jpg", "assets/tile-1200/tile-1200-013-detail.jpg"] },
+        { code: "12TB033", gallery: ["assets/tile-1200/tile-1200-014-main.jpg", "assets/tile-1200/tile-1200-014-detail.jpg"] },
+        { code: "12TB035", gallery: ["assets/tile-1200/tile-1200-015-main.jpg", "assets/tile-1200/tile-1200-015-detail.jpg"] },
+        { code: "12TB036", gallery: ["assets/tile-1200/tile-1200-016-main.jpg", "assets/tile-1200/tile-1200-016-detail.jpg"] },
+        { code: "12TB037", gallery: ["assets/tile-1200/tile-1200-017-main.jpg", "assets/tile-1200/tile-1200-017-detail.jpg"] },
+        { code: "12TB038", gallery: ["assets/tile-1200/tile-1200-018-main.jpg", "assets/tile-1200/tile-1200-018-detail.jpg"] },
+        { code: "12TB039", gallery: ["assets/tile-1200/tile-1200-019-main.jpg", "assets/tile-1200/tile-1200-019-detail.jpg"] },
+        { code: "12TB047", gallery: ["assets/tile-1200/tile-1200-020-main.jpg", "assets/tile-1200/tile-1200-020-detail.jpg"] },
+        { code: "12TB055", gallery: ["assets/tile-1200/tile-1200-021-main.jpg", "assets/tile-1200/tile-1200-021-detail.jpg"] },
+        { code: "12TB056", gallery: ["assets/tile-1200/tile-1200-022-main.jpg", "assets/tile-1200/tile-1200-022-detail.jpg"] },
+        { code: "12TB057", gallery: ["assets/tile-1200/tile-1200-023-main.jpg", "assets/tile-1200/tile-1200-023-detail.jpg"] },
+        { code: "12TB058", gallery: ["assets/tile-1200/tile-1200-024-main.jpg", "assets/tile-1200/tile-1200-024-detail.jpg"] }
+      ]
+    },
+    {
+      series: "carpet",
+      sizeKey: "carpet-720x900",
+      label: "Carpet Tile 720x900mm",
+      folder: "carpet-pdf",
+      prefix: "CARPET-720",
+      items: [
+        { code: "NO.801", gallery: carpetGallery("carpet-720-stock", "801") },
+        { code: "NO.802", gallery: carpetGallery("carpet-720-stock", "802") },
+        { code: "NO.803", gallery: carpetGallery("carpet-720-stock", "803") },
+        { code: "NO.805", gallery: carpetGallery("carpet-720-stock", "805") },
+        { code: "NO.806", gallery: carpetGallery("carpet-720-stock", "806") },
+        { code: "NO.807", gallery: carpetGallery("carpet-720-stock", "807") },
+        { code: "NO.808", gallery: carpetGallery("carpet-720-stock", "808") },
+        { code: "NO.809", gallery: carpetGallery("carpet-720-stock", "809") },
+        { code: "NO.810", gallery: carpetGallery("carpet-720-stock", "810") },
+        { code: "NO.811", gallery: carpetGallery("carpet-720-stock", "811") },
+        { code: "NO.812", gallery: carpetGallery("carpet-720-stock", "812") },
+        { code: "NO.813", gallery: carpetGallery("carpet-720-stock", "813") },
+        { code: "NO.815", gallery: carpetGallery("carpet-720-stock", "815") },
+        { code: "NO.816", gallery: carpetGallery("carpet-720-stock", "816") },
+        { code: "NO.817", gallery: carpetGallery("carpet-720-stock", "817") },
+        { code: "NO.818", gallery: carpetGallery("carpet-720-stock", "818") },
+        { code: "NO.819", gallery: carpetGallery("carpet-720-custom", "819") },
+        { code: "NO.820", gallery: carpetGallery("carpet-720-custom", "820") },
+        { code: "NO.822", gallery: carpetGallery("carpet-720-custom", "822") },
+        { code: "NO.823", gallery: carpetGallery("carpet-720-custom", "823") },
+        { code: "NO.825", gallery: carpetGallery("carpet-720-custom", "825") },
+        { code: "NO.826", gallery: carpetGallery("carpet-720-custom", "826") },
+        { code: "NO.827", gallery: carpetGallery("carpet-720-custom", "827") },
+        { code: "NO.828", gallery: carpetGallery("carpet-720-custom", "828") },
+        { code: "NO.830", gallery: carpetGallery("carpet-720-custom", "830") },
+        { code: "NO.831", gallery: carpetGallery("carpet-720-custom", "831") },
+        { code: "NO.832", gallery: carpetGallery("carpet-720-custom", "832") },
+        { code: "NO.833", gallery: carpetGallery("carpet-720-custom", "833") }
+      ]
+    },
+    {
+      series: "carpet",
+      sizeKey: "carpet-750x1350",
+      label: "Carpet Tile 750x1350mm",
+      folder: "carpet-pdf",
+      prefix: "CARPET-750",
+      items: [
+        { code: "PD751301", gallery: carpetGallery("carpet-750", "PD751301") },
+        { code: "PD751302", gallery: carpetGallery("carpet-750", "PD751302") },
+        { code: "PD751303", gallery: carpetGallery("carpet-750", "PD751303") },
+        { code: "PD751305", gallery: carpetGallery("carpet-750", "PD751305") },
+        { code: "PD751306", gallery: carpetGallery("carpet-750", "PD751306") },
+        { code: "PD751307", gallery: carpetGallery("carpet-750", "PD751307") },
+        { code: "PD751308", gallery: carpetGallery("carpet-750", "PD751308") },
+        { code: "PD751309", gallery: carpetGallery("carpet-750", "PD751309") },
+        { code: "PD751310", gallery: carpetGallery("carpet-750", "PD751310") },
+        { code: "PD751311", gallery: carpetGallery("carpet-750", "PD751311") },
+        { code: "PD751312", gallery: carpetGallery("carpet-750", "PD751312") }
+      ]
+    }
+  ];
+
+  const allPhotos = specGroups.flatMap((group) => {
+    if (group.items) {
+      return group.items.map((item, index) => {
+        return {
+          id: `${group.prefix}-${String(index + 1).padStart(3, "0")}`,
+          groupKey: group.mergeKey || `${group.prefix}-${group.start || 1}`,
+          sourceKey: group.prefix,
+          series: group.series,
+          sizeKey: group.sizeKey,
+          actualSizes: actualSizeKeys(group),
+          size: group.cardLabel || group.label,
+          code: item.code,
+          thumb: item.gallery[0],
+          src: item.gallery[0],
+          gallery: item.gallery,
+          detailLabel: item.detailLabel || (group.prefix === "DECK" ? "Real product view, electronic render, detail view, and application view" : "Product image")
+        };
+      });
+    }
+    const pages = group.pages || Array.from({ length: group.count }, (_, index) => (group.start || 1) + index);
+    return pages.map((fileNumber, index) => {
+      const num = String(fileNumber).padStart(3, "0");
+      const filePrefix = group.folder === "stair-step-32" ? "STAIR-32" : group.prefix;
+      const fileName = `${filePrefix}-${num}.jpg`;
+      const isPdfPage = ["stair-step-new", "stair-step-32", "wood-deck"].includes(group.folder);
+      const galleryBase = `assets/pdf-gallery/${group.folder}/${filePrefix}-${num}`;
+      const galleryParts = group.galleryParts || ["cover", "product", "application"];
+      const gallery = isPdfPage
+        ? galleryParts.map((part) => `${galleryBase}-${part}.jpg`)
+        : [`assets/wood-images/${group.folder}/${fileName}`];
+      return {
+        id: `${group.prefix}-${String(index + 1).padStart(3, "0")}`,
+        groupKey: group.mergeKey || `${group.prefix}-${group.start || 1}`,
+        sourceKey: group.prefix,
+        series: group.series,
+        sizeKey: group.sizeKey,
+        actualSizes: actualSizeKeys(group),
+        size: group.cardLabel || group.label,
+        code: group.codes ? group.codes[index] : `${group.prefix}-${num}`,
+        thumb: gallery[0],
+        src: gallery[0],
+        gallery,
+        detailLabel: isPdfPage ? "Product view, detail view, and application view" : "Product image"
+      };
+    });
+  });
+
+  const pendingSections = [];
+
+  const catalog = document.querySelector("#catalog");
+  let activePhotoIndex = 0;
+  let activeGallery = [];
+  let activeGalleryIndex = 0;
+  let activeMenuSizeKey = "";
+  let currentLang = "vi";
+
+  const viText = {
+    "Tile Product Catalog": "Danh mục sản phẩm gạch",
+    "Filter by size": "Lọc theo kích thước",
+    "All sizes": "Tất cả kích thước",
+    "Series": "Dòng sản phẩm",
+    "All series": "Tất cả dòng",
+    "Reset": "Đặt lại",
+    "Language": "Ngôn ngữ",
+    "English": "English",
+    "All Series": "Tất cả dòng",
+    "Wood Grain": "Gạch vân gỗ",
+    "Wood Grain Series": "Dòng gạch vân gỗ",
+    "All Wood Grain": "Tất cả gạch vân gỗ",
+    "Stair Step Series": "Dòng gạch bậc thang",
+    "All Stair Step": "Tất cả gạch bậc thang",
+    "Outdoor Stair Series": "Dòng bậc thang ngoài trời",
+    "800x800 Series": "Dòng 800x800",
+    "All 800x800": "Tất cả 800x800",
+    "1000x1000 Series": "Dòng 1000x1000",
+    "All 1000x1000": "Tất cả 1000x1000",
+    "1200x1200 Series": "Dòng 1200x1200",
+    "All 1200x1200": "Tất cả 1200x1200",
+    "Carpet Series": "Dòng gạch thảm",
+    "All Carpet": "Tất cả gạch thảm",
+    "Glossy Surface": "Bề mặt bóng",
+    "Rustic Surface": "Bề mặt cổ điển",
+    "Lotus Series": "Dòng hoa sen",
+    "Castle Stone Series": "Dòng đá cổ",
+    "Regular Wood Grain": "Vân gỗ thông thường",
+    "Golden Silk": "Kim tuyến",
+    "Outdoor Stair": "Bậc thang ngoài trời",
+    "Stair Step": "Bậc thang",
+    "Wood Deck": "Gạch sàn ngoài trời",
+    "Deck": "Gạch sàn ngoài trời",
+    "Carpet Tile": "Gạch thảm",
+    "Thickness": "Độ dày",
+    "thickness": "độ dày",
+    "approx.": "khoảng",
+    "kg per box": "kg/thùng",
+    "pcs per box": "viên/thùng",
+    "boxes per pallet": "thùng/pallet",
+    "pallet": "pallet",
+    "pallets": "pallet",
+    "loose load": "đóng rời",
+    "Water absorption": "Độ hút nước",
+    "Product image": "Hình sản phẩm",
+    "Product view, detail view, and application view": "Hình sản phẩm, chi tiết và phối cảnh",
+    "Real product view, electronic render, detail view, and application view": "Hình thực tế, hình phối cảnh, chi tiết và ứng dụng",
+    "Close": "Đóng",
+    "Click Close, press Esc, or click outside the image to return.": "Bấm Đóng, nhấn Esc hoặc bấm ngoài hình để quay lại."
+  };
+
+  function t(text) {
+    return currentLang === "vi" ? (viText[text] || text) : text;
+  }
+
+  function translateText(text) {
+    if (currentLang !== "vi") return text;
+    return Object.entries(viText)
+      .sort((a, b) => b[0].length - a[0].length)
+      .reduce((value, [en, vi]) => value.replaceAll(en, vi), text);
+  }
+
+  function countText(count, noun = "photos") {
+    if (currentLang === "vi") return `${count} hình`;
+    return `${count} ${noun}`;
+  }
+
+  function applyStaticLanguage() {
+    document.documentElement.lang = currentLang === "vi" ? "vi" : "en";
+    document.title = t("Tile Product Catalog");
+    const staticSelectors = [
+      ".hero h1",
+      ".filter-bar label",
+      ".filter-bar option",
+      ".reset-btn",
+      ".tab",
+      ".menu-item",
+      ".lb-close",
+      ".lb-help"
+    ];
+    document.querySelectorAll(staticSelectors.join(",")).forEach((node) => {
+      if (!node.dataset.enText) node.dataset.enText = node.textContent.trim();
+      node.textContent = translateText(node.dataset.enText);
+    });
+    document.querySelector("#languageFilter").value = currentLang;
+    document.querySelector("#toBottom").setAttribute("aria-label", currentLang === "vi" ? "Đi tới cuối trang" : "Go to bottom");
+    document.querySelector("#backTop").setAttribute("aria-label", currentLang === "vi" ? "Quay lên đầu trang" : "Back to top");
+    document.querySelector("#lightbox").setAttribute("aria-label", currentLang === "vi" ? "Xem trước hình sản phẩm" : "Product image preview");
+  }
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    applyStaticLanguage();
+    renderCatalog();
+    setStickyOffsets();
+    updateFloatingNav();
+  }
+
+  function actualSizeKeys(group) {
+    const text = `${group.sizeKey} ${group.label} ${group.cardLabel || ""} ${group.subgroupLabel || ""}`.toLowerCase();
+    const sizes = [];
+    [
+      "150x900",
+      "200x1000",
+      "200x1200",
+      "300x1200",
+      "470x1200",
+      "600x1200",
+      "720x900",
+      "750x750",
+      "750x1350",
+      "800x800",
+      "1000x1000",
+      "1200x1200"
+    ].forEach((size) => {
+      const compact = size.replace("x", "");
+      if (text.includes(size) || text.includes(compact)) sizes.push(size);
+    });
+    if (group.sizeKey === "wood-deck-200") return ["200x1000", "200x1200"];
+    if (group.sizeKey === "stair-outdoor" && !sizes.length) return ["300x1200", "470x1200"];
+    return sizes.length ? sizes : [group.sizeKey];
+  }
+
+  function packageInfo(group) {
+    const byKey = {
+      "750x750": "Thickness: 9.8mm / 34.5kg per box / 3 pcs per box",
+      "600x1200": "Thickness: 9.8mm / 43kg per box / 3 pcs per box",
+      "wood-150x900": "Thickness: 9.5mm / approx. 27kg per box / 10 pcs per box / 17 pallets x 60 boxes per pallet / loose load: 1037 boxes",
+      "wood-200x1000": "Thickness: 9.5mm / approx. 23.5kg per box / 6 pcs per box / 21 pallets x 54 boxes per pallet",
+      "wood-200x1200": "Thickness: 9.5mm / approx. 29kg per box / 6 pcs per box",
+      "wood-deck-200": "200x1000: thickness 18mm / 37.5kg per box / 5 pcs per box; 200x1200: thickness 18mm / 36kg per box / 4 pcs per box",
+      "470x1200": "Thickness: 12mm / 43.5kg per box / 3 pcs per box / pallet: 10 pallets x 56 boxes + 3 pallets x 25 boxes / loose load: 640 boxes",
+      "stair-470x1200": "Thickness: 12mm / 43.5kg per box / 3 pcs per box / pallet: 10 pallets x 56 boxes + 3 pallets x 25 boxes / loose load: 640 boxes",
+      "golden-silk-470x1200-15": "Thickness: 15mm / 37kg per box / 2 pcs per box / pallet: 10 pallets x 56 boxes + 6 pallets x 27 boxes + 1 pallet x 23 boxes / loose load: 755 boxes",
+      "800x800": "41kg per box / 3 pcs per box",
+      "1000-glossy": "Thickness: 9.8+/-0.2mm / 45kg per box / 2 pcs per box / 42 boxes per pallet",
+      "1000-rustic": "Thickness: 9.8+/-0.2mm / 45kg per box / 2 pcs per box / 42 boxes per pallet",
+      "1200x1200": "65kg per box / 2 pcs per box / 39 boxes per pallet",
+      "carpet-720x900": "Thickness: 9.5mm / 41kg per box / 3 pcs per box",
+      "carpet-750x1350": "Thickness: 9.8mm / 43kg per box / 2 pcs per box"
+    };
+    const byPrefix = {
+      "STAIR-NEW": "300x1200: 15mm / 35kg per box / 3 pcs per box; 18mm / 28kg per box / 2 pcs per box",
+      "STAIR-WOOD": "300x1200: 15mm / 35kg per box / 3 pcs per box; 18mm / 28kg per box / 2 pcs per box",
+      "OUTDOOR-STEP": "300x1200: 15mm / 35kg per box / 3 pcs per box; 18mm / 28kg per box / 2 pcs per box",
+      "OUTDOOR-300-18": "300x1200: thickness 18mm / 28kg per box / 2 pcs per box / pallet: 10 pallets x 75 boxes + 7 pallets x 29 boxes + 1 pallet x 32 boxes / loose load: 998 boxes",
+      "OUTDOOR-470-15": "470x1200: thickness 15mm / 37kg per box / 2 pcs per box / pallet: 10 pallets x 56 boxes + 6 pallets x 27 boxes + 1 pallet x 23 boxes / loose load: 755 boxes",
+      "OUTDOOR-470-18": "470x1200: thickness 18mm / 45kg per box / 2 pcs per box / pallet: 10 pallets x 44 boxes + 6 pallets x 25 boxes + 1 pallet x 20 boxes / loose load: 620 boxes"
+    };
+    const packing = byPrefix[group.prefix] || byKey[group.sizeKey] || "";
+    const test = testInfo(group);
+    return translateText([packing, test].filter(Boolean).join(" / "));
+  }
+
+  function testInfo(group) {
+    const byKey = {
+      "wood-150x900": "Water absorption: 3-6%",
+      "wood-200x1000": "Water absorption: 3-6%",
+      "wood-200x1200": "Water absorption: 3-6%",
+      "750x750": "Water absorption: <=0.5%",
+      "600x1200": "Water absorption: <=0.5%",
+      "470x1200": "Water absorption: 0.5-3%",
+      "stair-470x1200": "Water absorption: 0.5-3%",
+      "golden-silk-470x1200-15": "Water absorption: 0.5-3%",
+      "800x800": "Water absorption: 0.5-3%",
+      "1000-glossy": "Water absorption: <=0.5%",
+      "1000-rustic": "Water absorption: <=0.5%",
+      "1200x1200": "Water absorption: <=0.5%",
+      "carpet-720x900": "Water absorption: <=0.5%",
+      "carpet-750x1350": "Water absorption: <=0.5%",
+      "wood-deck-200": "Water absorption: 3-6%"
+    };
+    const byPrefix = {
+      "STAIR-NEW": "Water absorption: 0.5-3%",
+      "STAIR-WOOD": "Water absorption: 0.5-3%",
+      "OUTDOOR-STEP": "Water absorption: 0.5-3%",
+      "OUTDOOR-300-18": "Water absorption: 0.5-3%",
+      "OUTDOOR-470-15": "Water absorption: 0.5-3%",
+      "OUTDOOR-470-18": "Water absorption: 0.5-3%"
+    };
+    return byPrefix[group.prefix] || byKey[group.sizeKey] || "";
+  }
+
+  function productCard(photo) {
+    const index = allPhotos.findIndex((item) => item.id === photo.id);
+    return `
+      <button class="product-card" type="button" data-series="${photo.series}" data-size="${photo.sizeKey}" data-actual-sizes="${photo.actualSizes.join(" ")}" onclick="openLightbox(${index})">
+        <img src="${photo.thumb}" alt="${photo.code}" loading="lazy">
+        <div class="card-info">
+          <span class="code">${photo.code}</span>
+          <span class="size">${translateText(photo.size)}</span>
+        </div>
+      </button>
+    `;
+  }
+
+  function specBlock(group) {
+    const groupKey = group.mergeKey || `${group.prefix}-${group.start || 1}`;
+    const relatedGroups = specGroups.filter((item) => {
+      const itemKey = item.mergeKey || `${item.prefix}-${item.start || 1}`;
+      return itemKey === groupKey;
+    });
+    const photos = allPhotos.filter((photo) => photo.groupKey === groupKey);
+    const gridContent = relatedGroups.length > 1
+      ? relatedGroups.map((item) => {
+        const subgroupPhotos = allPhotos.filter((photo) => photo.groupKey === groupKey && photo.sourceKey === item.prefix);
+        const itemPackageInfo = packageInfo(item);
+        return `
+          <div class="spec-subgroup" data-size="${item.sizeKey}">
+            <div class="subspec-title">
+              <div>${translateText(item.subgroupLabel || item.label)}${itemPackageInfo ? `<small>${itemPackageInfo}</small>` : ""}</div>
+              <span>${countText(subgroupPhotos.length)}</span>
+            </div>
+            <div class="product-grid">${subgroupPhotos.map(productCard).join("")}</div>
+          </div>
+        `;
+      }).join("")
+      : `<div class="product-grid">${photos.map(productCard).join("")}</div>`;
+    const groupPackageInfo = packageInfo(group);
+    return `
+      <section class="spec-block" data-series="${group.series}" data-size="${group.sizeKey}">
+        <div class="spec-header" onclick="toggleSpec(this)">
+          <div>
+            <span class="spec-name">${translateText(group.label)}</span>
+            ${groupPackageInfo ? `<span class="spec-detail">${groupPackageInfo}</span>` : ""}
+            <span class="spec-meta">${countText(photos.length)}</span>
+          </div>
+          <span class="toggle">▼</span>
+        </div>
+        ${gridContent}
+      </section>
+    `;
+  }
+
+  function uniqueSpecGroups(series) {
+    const woodOrder = {
+      "750x750": 1,
+      "600x1200": 2,
+      "wood-150x900": 3,
+      "wood-200x1000": 4,
+      "wood-200x1200": 5,
+      "470x1200": 6,
+      "stair-600-300x1200": 7,
+      "wood-deck-200": 8
+    };
+    const seen = new Set();
+    return specGroups.filter((group) => {
+      if (group.series !== series) return false;
+      const key = group.mergeKey || `${group.prefix}-${group.start || 1}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).sort((a, b) => {
+      if (series !== "wood") return 0;
+      return (woodOrder[a.sizeKey] || 99) - (woodOrder[b.sizeKey] || 99);
+    });
+  }
+
+  function pendingSection(section) {
+    return `
+      <section id="${section.id}" class="series-section" data-series="${section.id}">
+        <div class="section-header">
+          <h2>${section.title}</h2>
+          <span>Photos pending</span>
+        </div>
+        <div class="spec-block" data-series="${section.id}" data-size="">
+          <div class="placeholder-grid">
+            <div class="placeholder-card">${section.note}</div>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  function renderCatalog() {
+    catalog.innerHTML = `
+      <section id="wood" class="series-section" data-series="wood">
+        <div class="section-header">
+          <h2>${t("Wood Grain Series")}</h2>
+          <span>${countText(allPhotos.filter((item) => item.series === "wood").length, "images")} / ${currentLang === "vi" ? "gạch vân gỗ + gạch sàn ngoài trời" : "regular wood tile + wood deck"}</span>
+        </div>
+        ${uniqueSpecGroups("wood").map(specBlock).join("")}
+      </section>
+      <section id="stair" class="series-section" data-series="stair">
+        <div class="section-header">
+          <h2>${t("Stair Step Series")}</h2>
+          <span>${countText(allPhotos.filter((item) => item.series === "stair").length, "images")} / ${currentLang === "vi" ? "bộ gạch bậc thang đồng bộ" : "matching stair step sets"}</span>
+        </div>
+        ${uniqueSpecGroups("stair").map(specBlock).join("")}
+      </section>
+      <section id="tile800" class="series-section" data-series="tile800">
+        <div class="section-header">
+          <h2>${t("800x800 Series")}</h2>
+          <span>${countText(allPhotos.filter((item) => item.series === "tile800").length, "images")} / ${currentLang === "vi" ? "sản phẩm 800x800" : "800x800 products"}</span>
+        </div>
+        ${uniqueSpecGroups("tile800").map(specBlock).join("")}
+      </section>
+      <section id="tile1000" class="series-section" data-series="tile1000">
+        <div class="section-header">
+          <h2>${t("1000x1000 Series")}</h2>
+          <span>${countText(allPhotos.filter((item) => item.series === "tile1000").length, "images")} / ${currentLang === "vi" ? "bề mặt bóng + cổ điển" : "glossy + rustic surface"}</span>
+        </div>
+        ${uniqueSpecGroups("tile1000").map(specBlock).join("")}
+      </section>
+      <section id="tile1200" class="series-section" data-series="tile1200">
+        <div class="section-header">
+          <h2>${t("1200x1200 Series")}</h2>
+          <span>${countText(allPhotos.filter((item) => item.series === "tile1200").length, "images")} / ${currentLang === "vi" ? "sản phẩm 1200x1200" : "1200x1200 products"}</span>
+        </div>
+        ${uniqueSpecGroups("tile1200").map(specBlock).join("")}
+      </section>
+      <section id="carpet" class="series-section" data-series="carpet">
+        <div class="section-header">
+          <h2>${t("Carpet Series")}</h2>
+          <span>${countText(allPhotos.filter((item) => item.series === "carpet").length, "images")} / 720x900 + 750x1350</span>
+        </div>
+        ${uniqueSpecGroups("carpet").map(specBlock).join("")}
+      </section>
+      ${pendingSections.map(pendingSection).join("")}
+    `;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const size = document.querySelector("#sizeFilter").value;
+    const series = document.querySelector("#seriesFilter").value;
+    let visible = 0;
+    let total = 0;
+
+    document.querySelectorAll(".product-card").forEach((card) => {
+      total += 1;
+      const sizeMatch = !size || (card.dataset.actualSizes || "").split(" ").includes(size);
+      const menuSizeMatch = !activeMenuSizeKey || card.dataset.size === activeMenuSizeKey;
+      const show = sizeMatch && menuSizeMatch && (!series || card.dataset.series === series);
+      card.classList.toggle("hidden", !show);
+      if (show) visible += 1;
+    });
+
+    document.querySelectorAll(".spec-subgroup").forEach((group) => {
+      const cards = [...group.querySelectorAll(".product-card")];
+      const anyVisible = cards.some((card) => !card.classList.contains("hidden"));
+      group.classList.toggle("hidden", !anyVisible);
+    });
+
+    document.querySelectorAll(".spec-block").forEach((block) => {
+      const cards = [...block.querySelectorAll(".product-card")];
+      if (!cards.length) {
+        block.classList.toggle("hidden", !!series && block.dataset.series !== series);
+        return;
+      }
+      const anyVisible = cards.some((card) => !card.classList.contains("hidden"));
+      block.classList.toggle("hidden", !anyVisible);
+    });
+
+    document.querySelectorAll(".series-section").forEach((section) => {
+      const blocks = [...section.querySelectorAll(".spec-block")];
+      const anyVisible = blocks.some((block) => !block.classList.contains("hidden"));
+      section.style.display = anyVisible ? "" : "none";
+    });
+
+    document.querySelector("#filterCount").textContent = currentLang === "vi" ? `${visible} / ${total} hình` : `${visible} / ${total} photos`;
+    setActiveSpec(activeMenuSizeKey || size, series);
+  }
+
+  function applySizeFilter() {
+    activeMenuSizeKey = "";
+    applyFilters();
+  }
+
+  function applySeriesFilter() {
+    activeMenuSizeKey = "";
+    applyFilters();
+  }
+
+  function resetFilters() {
+    document.querySelector("#sizeFilter").value = "";
+    document.querySelector("#seriesFilter").value = "";
+    activeMenuSizeKey = "";
+    applyFilters();
+  }
+
+  function setActiveSpec(sizeKey, seriesKey) {
+    document.querySelectorAll(".menu-item").forEach((button) => {
+      const menu = button.closest(".series-menu");
+      const menuSeries = menu?.querySelector(".tab")?.dataset.section;
+      const isAllForSeries = !sizeKey && seriesKey && !button.dataset.size && menuSeries === seriesKey;
+      button.classList.toggle("active", button.dataset.size === sizeKey && !!sizeKey || isAllForSeries);
+    });
+  }
+
+  function jumpSpec(sizeKey, sectionId) {
+    activeMenuSizeKey = sizeKey;
+    const sizeFilter = document.querySelector("#sizeFilter");
+    sizeFilter.value = [...sizeFilter.options].some((option) => option.value === sizeKey) ? sizeKey : "";
+    document.querySelector("#seriesFilter").value = "";
+    applyFilters();
+    setActiveTab(sectionId);
+    window.setTimeout(() => {
+      document.querySelector(`#${sectionId}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 40);
+    closeSeriesMenus();
+  }
+
+  function jumpSeries(sectionId) {
+    activeMenuSizeKey = "";
+    document.querySelector("#sizeFilter").value = "";
+    document.querySelector("#seriesFilter").value = sectionId;
+    applyFilters();
+    setActiveTab(sectionId);
+    window.setTimeout(() => {
+      document.querySelector(`#${sectionId}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 40);
+    closeSeriesMenus();
+  }
+
+  function jumpAll() {
+    activeMenuSizeKey = "";
+    document.querySelector("#sizeFilter").value = "";
+    document.querySelector("#seriesFilter").value = "";
+    applyFilters();
+    setActiveTab("all");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    closeSeriesMenus();
+  }
+
+  function closeSeriesMenus() {
+    document.querySelectorAll(".series-menu[open]").forEach((menu) => {
+      menu.removeAttribute("open");
+    });
+  }
+
+  function setStickyOffsets() {
+    const filter = document.querySelector(".filter-bar");
+    const tabs = document.querySelector(".cat-tabs");
+    document.documentElement.style.setProperty("--filter-height", `${filter.offsetHeight}px`);
+    document.documentElement.style.setProperty("--tabs-height", `${tabs.offsetHeight}px`);
+    document.documentElement.style.setProperty("--quick-height", "0px");
+    positionOpenSeriesMenu();
+  }
+
+  function positionOpenSeriesMenu() {
+    const menu = document.querySelector(".series-menu[open]");
+    if (!menu) return;
+    const dropdown = menu.querySelector(".series-dropdown");
+    const summary = menu.querySelector("summary");
+    if (!dropdown || !summary) return;
+    const gap = window.matchMedia("(max-width: 760px)").matches ? 12 : 22;
+    const width = Math.min(360, window.innerWidth - gap * 2);
+    const rect = summary.getBoundingClientRect();
+    const left = Math.max(gap, Math.min(rect.left, window.innerWidth - width - gap));
+    dropdown.style.setProperty("--dropdown-left", `${left}px`);
+  }
+
+  function setActiveTab(id) {
+    document.querySelectorAll(".tab").forEach((tab) => {
+      tab.classList.toggle("active", tab.dataset.section === id);
+    });
+  }
+
+  function toggleSpec(header) {
+    header.closest(".spec-block").classList.toggle("collapsed");
+  }
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function scrollToBottom() {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+  }
+
+  function updateFloatingNav() {
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const nearBottom = window.scrollY > maxScroll - 260;
+    document.querySelector("#backTop").classList.toggle("visible", window.scrollY > 460);
+    document.querySelector("#toBottom").classList.toggle("visible", !nearBottom);
+  }
+
+  function openLightbox(index) {
+    activePhotoIndex = index;
+    const photo = allPhotos[activePhotoIndex];
+    activeGallery = photo.gallery;
+    activeGalleryIndex = 0;
+    renderLightboxImage();
+    document.querySelector("#lightbox").classList.add("active");
+  }
+
+  function closeLightbox() {
+    document.querySelector("#lightbox").classList.remove("active");
+  }
+
+  function moveLightbox(step) {
+    activeGalleryIndex = (activeGalleryIndex + step + activeGallery.length) % activeGallery.length;
+    renderLightboxImage();
+  }
+
+  function renderLightboxImage() {
+    const photo = allPhotos[activePhotoIndex];
+    const current = activeGallery[activeGalleryIndex];
+    document.querySelector("#lb-img").src = current;
+    document.querySelector("#lb-img").alt = photo.code;
+    const positionText = currentLang === "vi" ? `${activeGalleryIndex + 1} / ${activeGallery.length}` : `${activeGalleryIndex + 1} of ${activeGallery.length}`;
+    document.querySelector("#lb-caption").textContent = `${photo.code} / ${translateText(photo.size)} / ${translateText(photo.detailLabel)} / ${positionText}`;
+    document.querySelector("#lb-thumbs").innerHTML = activeGallery.map((src, index) => `
+      <button class="lb-thumb ${index === activeGalleryIndex ? "active" : ""}" type="button" onclick="selectLightboxImage(${index})">
+        <img src="${src}" alt="">
+      </button>
+    `).join("");
+  }
+
+  function selectLightboxImage(index) {
+    activeGalleryIndex = index;
+    renderLightboxImage();
+  }
+
+  document.addEventListener("keydown", (event) => {
+    if (!document.querySelector("#lightbox").classList.contains("active")) return;
+    if (event.key === "Escape") closeLightbox();
+    if (event.key === "ArrowLeft") moveLightbox(-1);
+    if (event.key === "ArrowRight") moveLightbox(1);
+  });
+
+  document.querySelector("#lightbox").addEventListener("click", (event) => {
+    if (event.target.id === "lightbox") closeLightbox();
+  });
+
+  window.addEventListener("scroll", updateFloatingNav);
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".series-menu")) closeSeriesMenus();
+  });
+
+  document.querySelectorAll(".series-menu").forEach((menu) => {
+    menu.addEventListener("toggle", () => {
+      if (!menu.open) return;
+      const sectionId = menu.querySelector(".tab")?.dataset.section;
+      if (sectionId) setActiveTab(sectionId);
+      document.querySelectorAll(".series-menu").forEach((other) => {
+        if (other !== menu) other.removeAttribute("open");
+      });
+      positionOpenSeriesMenu();
+    });
+  });
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    if (document.querySelector(".series-menu[open]")) return;
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (visible) setActiveTab(visible.target.id);
+  }, {
+    rootMargin: "-35% 0px -55% 0px",
+    threshold: [0, .2, .5, .8]
+  });
+
+  setLanguage("vi");
+  window.addEventListener("resize", setStickyOffsets);
+  window.addEventListener("scroll", positionOpenSeriesMenu, { passive: true });
+  document.querySelectorAll(".series-section").forEach((section) => sectionObserver.observe(section));
+</script>
+</body>
+</html>
