@@ -26,9 +26,15 @@
   }
 
   * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
   body {
     margin: 0;
+    max-width: 100%;
+    overflow-x: hidden;
     color: var(--ink);
     background: var(--bone);
     font-family: var(--sans);
@@ -617,7 +623,8 @@
       padding: 10px 12px;
     }
     .cat-tabs.menu-open {
-      overflow: visible;
+      overflow-x: auto;
+      overflow-y: visible;
     }
     .tab { white-space: nowrap; }
     main {
